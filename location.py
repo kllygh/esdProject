@@ -14,7 +14,7 @@ CORS(app)
 
 #################### Converting Customer Location to Lat and Long ####################################
 
-API_KEY = 'AIzaSyClY1bnZ_jryQ8qUOacL-15pdAeBYZRWTw'
+API_KEY = 'example'
 
 #this is now hardcoded but need to change the address to collect from the NearBy MS
 address = '1 hack drive, menlo park, CA'
