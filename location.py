@@ -13,44 +13,46 @@ app = Flask(__name__)
 CORS(app)
 
 #################### Converting Customer Location to Lat and Long ####################################
+def get_cust_location(address):
+    API_KEY = 'example'
 
-API_KEY = 'example'
+    #this is now hardcoded but need to change the address to collect from the NearBy MS
+    address = '1 hack drive, menlo park, CA'
 
-#this is now hardcoded but need to change the address to collect from the NearBy MS
-address = '1 hack drive, menlo park, CA'
+    params  = {
+        'key': API_KEY,
+        'address': address
+    }
 
-params  = {
-    'key': API_KEY,
-    'address': address
-}
+    base_url = 'https://maps.googleapis.com/maps/api/geocode/json?'
+    response = requests.get(base_url,params=params).json()
+    response.keys()
 
-base_url = 'https://maps.googleapis.com/maps/api/geocode/json?'
-response = requests.get(base_url,params=params).json()
-response.keys()
-
-try:
-    response = requests.get(base_url, params=params)
-    response.raise_for_status()  # raise an exception for 4xx and 5xx errors
-    data = response.json()
-    if data['status'] == 'OK':
-        geometry = data['results'][0]['geometry']
-        lat = geometry['location']['lat']
-        lon = geometry['location']['lng']
-        print(f'Latitude: {lat}, Longitude: {lon}')
-    else:
-        print(f'Geocoding failed. Status: {data["status"]}')
-except requests.exceptions.HTTPError as err:
-    print(f'Error: {err}')
-except requests.exceptions.RequestException as err:
-    print(f'Request error: {err}')
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()  # raise an exception for 4xx and 5xx errors
+        data = response.json()
+        if data['status'] == 'OK':
+            geometry = data['results'][0]['geometry']
+            lat = geometry['location']['lat']
+            lon = geometry['location']['lng']
+            print(f'Latitude: {lat}, Longitude: {lon}')
+        else:
+            print(f'Geocoding failed. Status: {data["status"]}')
+    except requests.exceptions.HTTPError as err:
+        print(f'Error: {err}')
+    except requests.exceptions.RequestException as err:
+        print(f'Request error: {err}')
 
 
 ################# Finding the nearest location ########################################################
 
 
-@app.route('/location')
+@app.route('/location', methods = ['POST']) 
 def find_nearest_location():
-    data = request.json
+    data = request.json # {starting_loc:"sembawang close blk 234a" , rest_loc:[{lat:...., lng:.....,rest_id:.....},{lat:...., lng:.....},{lat:...., lng:.....}] }
+
+    data["starting_location"] = get_cust_location(data['starting_loc'])
 
     #starting_location = {lat:...., lng:.....}
     #restaurant_location = [{lat:...., lng:.....},{lat:...., lng:.....},{lat:...., lng:.....}]
