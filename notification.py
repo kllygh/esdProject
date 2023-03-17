@@ -76,7 +76,7 @@ def transactionCompleted(phoneNo, transAmt, transID):
     phoneNum = phoneNo 
     transactionAmount = transAmt
     transactionID = transID
-    msgbody = 'Successful payment of $' + transactionAmount + 'made to Mystery Box. Transaction ID is ' + transactionID + '.'
+    msgbody = 'Successful payment of $' + transactionAmount + ' made to Mystery Box. Transaction ID is ' + transactionID + '.'
     
     message = client.messages.create(  
                                     messaging_service_sid = msg_service_sid, 
@@ -94,7 +94,7 @@ def refundCompleted(phoneNo, refAmt, refID):
     phoneNum = phoneNo 
     refundAmount = refAmt
     refundID = refID
-    msgbody = 'Successful refund of $' + refundAmount + 'made. Refund ID is ' + refundID + '.'
+    msgbody = 'Successful refund of $' + refundAmount + ' made. Refund ID is ' + refundID + '.'
     
     message = client.messages.create(  
                                     messaging_service_sid = msg_service_sid, 
