@@ -8,7 +8,7 @@ auth_token = 'f7a22749373aeffa15d01a09436fe2ba'
 msg_service_sid = 'MGb72ae56ef4f33be32fc35e4be263a85a'
 client = Client(account_sid, auth_token) 
 
-monitorBindingKey='#.notif'
+monitorBindingKey='send.notif'
 
 def sendNotif():
     amqp_setup.check_setup()
