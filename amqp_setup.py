@@ -30,7 +30,7 @@ channel.queue_declare(queue=queue_name, durable=True)
 channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='.refund')
 
 queue_name="Refund_Reply"
-channel.queue_declare(queue=queue_name, durable=True)
+channel.queue_declare(queue=queue_name, durable=True, exclusive=True)
 channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#.reply')
 
 def check_setup():
