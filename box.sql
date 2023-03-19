@@ -27,6 +27,9 @@ SET time_zone = "+00:00";
 -- Table structure for table `box`
 --
 
+CREATE DATABASE IF NOT EXISTS `box` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `box`;
+
 DROP TABLE IF EXISTS `box`;
 CREATE TABLE IF NOT EXISTS `box` (
   `boxID` int NOT NULL,
@@ -39,10 +42,17 @@ CREATE TABLE IF NOT EXISTS `box` (
   `price` decimal(10,0) NOT NULL,
   `description` varchar(64) DEFAULT NULL,
   `postName` varchar(64) NOT NULL,
+  `postDate` date NOT NULL,
   PRIMARY KEY (`boxID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `quantity`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
+(1782487, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19'),
+(31243123, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
