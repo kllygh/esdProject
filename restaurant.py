@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/restaurant'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -73,69 +74,43 @@ def find_by_restaurant_id(restaurant_id):
     ), 404
 
 
-#################### GET SOME RESTAURANTS #################################
-######### /restaurants?count=5 to retrieve the first 5
-@app.route("/restaurants")
-def get_some():
-    count = request.args.get("count", default=10, type=int) # set a default value of 10 if count parameter not provided
-    restaurantlist = Restaurant.query.limit(count).all()
-    if len(restaurantlist):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "restaurants": [restaurant.json() for restaurant in restaurantlist]
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no restaurants."
-        }
-    ), 404
 
-
-#################### ADD A RESTAURANT #################################
-@app.route("/restaurant/<int:restaurant_id>", methods=['POST'])
-def create_restaurant(restaurant_id):
-    if (Restaurant.query.filter_by(restaurant_id=restaurant_id).first()):
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "restaurant_id": restaurant_id
-                },
-                "message": "Restaurant already exists."
-            }
-        ), 400
-
-    data = request.get_json()
-    restaurant = Restaurant(restaurant_id, **data)
-
+#################### FILTER BY RESTAURANT_ID #################################
+@app.route("/restaurant", methods=["POST"])
+def get_by_restaurant_id():
     try:
-        db.session.add(restaurant)
-        db.session.commit()
-    except:
-        return jsonify(
-            {
-                "code": 500,
-                "data": {
-                    "restaurant_id": restaurant_id
-                },
-                "message": "An error occurred creating the restaurant."
-            }
-        ), 500
+        # Retrieve restaurant_ids from the request body
+        data = request.get_json()
+        restaurant_ids = data["restaurant_ids"]
 
-    return jsonify(
-        {
-            "code": 201,
-            "data": restaurant.json()
-        }
-    ), 201
+        # Retrieve entries from the database that match the restaurant_ids
+        restaurant_entries = Restaurant.query.filter(Restaurant.restaurant_id.in_(restaurant_ids)).all()
 
+        # Create a nested list containing the data for each entry
+        restaurant_entry_data = [[entry.restaurant_id, entry.restaurant_location, entry.restaurant_name, entry.latitude, entry.longitude] for entry in restaurant_entries]
+
+        # Return a JSON response containing the list of arrays
+        return jsonify({
+            "code": 200,
+            "data": restaurant_entry_data
+        })
+    except Exception as e:
+        # Return a JSON response with a 500 status code and error message
+        return jsonify({
+            "code": 500,
+            "message": "An error occurred while processing your request: {}".format(str(e))
+        })
 
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
+
+
+
+
+
+
+
+
+
 
