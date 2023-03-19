@@ -29,6 +29,10 @@ queue_name="Refund"
 channel.queue_declare(queue=queue_name, durable=True)
 channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='.refund')
 
+queue_name="Refund_Reply"
+channel.queue_declare(queue=queue_name, durable=True)
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#.reply')
+
 def check_setup():
     global connection, channel, hostname, port, exchangename, exchangetype
 
