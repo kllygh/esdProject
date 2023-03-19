@@ -51,7 +51,8 @@ def get_cust_location(address):
 def find_nearest_location():
 
     print("Start of find_nearest_location")
-    data = request.json() # {starting_loc:"1 hack drive, menlo park, CA" , rest_loc:[{lat:...., lng:.....,rest_id:.....},{lat:...., lng:.....},{lat:...., lng:.....}] }
+    data = request.json # {starting_loc:"1 hack drive, menlo park, CA" , rest_loc:[{lat:...., lng:.....,rest_id:.....},{lat:...., lng:.....},{lat:...., lng:.....}] }
+    print(data)
 
     # return ({'lat':lat, 'lng': lon})
     data["starting_location"] = get_cust_location(data.get('starting_location'))
