@@ -50,6 +50,7 @@ class Box(db.Model):
                 "restaurant_id": self.restaurant_id,
                 "cust_id": self.cust_id,
                 "postTime": self.postTime,
+                "quantity": self.quantity,
                 "collectionTime": self.collectionTime,
                 "price": self.price,
                 "description": self.description,
@@ -147,14 +148,17 @@ def delete_box(boxID):
     ), 404
 
 #get a few post 
-@app.route("/box/<int:restaurant_id>")
+@app.route("/box/rest/<int:restaurant_id>")
 def find_by_restaurantID(restaurant_id):
-    box = Box.query.filter_by(restaurant_id=restaurant_id, postDate = date.today()).all()
-    if box:
+    boxlist = Box.query.filter_by(restaurant_id=restaurant_id)
+    
+    if boxlist:
         return jsonify(
             {
                 "code": 200,
-                "data": box.json()
+                "data": {
+                    'box': [box.json() for box in boxlist]
+                } 
             }
         )
     return jsonify(

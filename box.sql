@@ -8,7 +8,6 @@
 -- PHP Version: 7.4.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -49,7 +48,6 @@ CREATE TABLE IF NOT EXISTS `box` (
 INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `quantity`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
 (1782487, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19'),
 (31243123, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19');
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
