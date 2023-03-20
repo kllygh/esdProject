@@ -23,6 +23,7 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    customer_number = db.Column(db.Integer, nullable=False)
     customer_id = db.Column(db.Integer, nullable=False)
     restaurant_id = db.Column(db.Integer, nullable=False)
     boxID = db.Column(db.Integer, nullable=False)  # change to boxID
@@ -43,6 +44,7 @@ class Order(db.Model):
     def json(self):
         order_info = {
             'order_id': self.order_id,
+            'customer_number': self.customer_number,
             'customer_id': self.customer_id,
             'restaurant_id': self.restaurant_id,
             'boxID': self.boxID,
