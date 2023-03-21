@@ -21,13 +21,21 @@ boxURL = "http://localhost:5000/box"
 ##is refund going to be triggered onclick, or need to have flask route?
 ##need to add code to receive OrderID
 
+############# code added here #########################################################
+@app.route('/cancel_order/<OrderID>', methods=['POST'])
+
 def CancelOrder(OrderID):
     #get order details
     order = invoke_http(orderURL + '/' + OrderID) #type = dict
+    ############# code added here #########################################################
+    #or is it:
+    #OrderID = order['data']['OrderID']
     code = order["code"]
     message = json.dumps(order)
     if code not in range(200, 300):
         routing_key = 'retrieveDetails.error'
+        ############# code added here #########################################################
+        #updateActivityandError(OrderID, message, order, routing_key) OR
         updateActivityandError(code, message, order, routing_key)
         return {
             "code": 500,
@@ -61,7 +69,7 @@ def CancelOrder(OrderID):
         )
     box = invoke_http(boxURL + '/' + boxID, method='PUT', json=quantity_json)
     code = box["code"]
-    message = json.dumps(box)
+    message = json.dumps(box) 
     if code not in range(200, 300):
         routing_key = 'updateInventory.error'
         updateActivityandError(code, message, box, routing_key)
@@ -70,9 +78,10 @@ def CancelOrder(OrderID):
             "data": {"cancel_order_result": box},
             "message": "Cancel order failure sent for error handling."
         }
-    routing_key = 'updateInventory.info'
+    routing_key = 'updateInventory.info' 
     updateActivityandError(code, message, box, routing_key)
 
+    
     #start refunding
     global phoneNo
     global amount
@@ -81,9 +90,36 @@ def CancelOrder(OrderID):
     phoneNo = orderDetails[""] #need to add when jolene update order MS
     startRefund(chargeID, amount)
 
-    #update order
+############# code added here #########################################################
+#update order
 
-    return
+def update_order_status(refund_status, OrderID):
+    if refund_status == 'Success':
+        order_update = jsonify({"status": "Refunded"})
+        order = invoke_http(orderURL + '/' + OrderID, method='PUT', json=order_update)
+        code = order["code"]
+        message = json.dumps(order)
+        if code not in range(200, 300):
+            return {
+                "code": 500,
+                "data": {"cancel_order_result": order},
+                "message": "Error updating order status."
+            }
+        # Update activity status
+        routing_key = 'updateOrder.info'
+        updateActivityandError(code, message, order, routing_key)
+        return {
+            "code": 200,
+            "data": {"cancel_order_result": order},
+            "message": "Order status updated to Refunded."
+        }
+    else:
+        return {
+            "code": 500,
+            "data": {"cancel_order_result": None},
+            "message": "Error processing refund."
+        }
+
 
 ##step6-7
 def startRefund(chargeID, Amt):
@@ -107,6 +143,7 @@ def startRefund(chargeID, Amt):
 
     amqp_setup.channel.start_consuming()
     # Listen for the response message on the reply-to queue
+
 
 def on_response(channel, method, properties, body):
     print("Response from Refund MS received")
