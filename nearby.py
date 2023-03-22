@@ -4,6 +4,7 @@ Things to remember to do:
 -- Link this MS to login
 -- Link this MS to rabbitMQ for activity logs
 -- Do we need to do an error handling MS here?
+-- Check if the near_by should be GET or POST? Confused with this still
 
 '''
 #################### Import libraries ###############################################################################
@@ -33,7 +34,7 @@ def near_by():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
-            #customer_location: refers to the location that the customer gave
+            #customer_location: refers to the location that the customer gave {'cust_location': '30 Sembawang Dr, Singapore 757713'}
             customer_location = request.get_json()
             print("\nReceived Customer's location in JSON:", customer_location)
 
@@ -79,7 +80,7 @@ def processNearByLocation(customer_location):
     
     print('\n-----Invoking Restaurant microservice-----')
     # restaurant_locations: Returns the list of dictionary of the restaurant information ~ restaurant that posted
-    restaurant_locations = invoke_http(rest_URL, method="POST", json=restaurant_ids)
+    restaurant_locations = invoke_http(rest_URL, method="POST", json=json.dumps(restaurant_ids))
     print('restaurant_locations:',restaurant_locations)
     print('\n-----End of Mystery Box microservice-----')
 

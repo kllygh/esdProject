@@ -5,15 +5,8 @@ from invokes import invoke_http
 #################### NearyBy Complex MS Testing ##################################################
 
 #invoke ... microservice to ...
-results = invoke_http("http://localhost:5000/book",method="GET")
-
-#invoke ... microservice to ...
-isbn = '9213213213213'
-book_details = {"availability":5,"price":213.00,"title":"ESD"}
-create_results = invoke_http(
-    "http://localhost:5000/book/" + isbn, method ="POST",
-    json = book_details
-)
+body = {'cust_location':"30 Sembawang Dr, Singapore 757713"}
+results = invoke_http("http://localhost:5100/near_by",method="POST",json=body)
 
 #################### Place an Order Complex MS Testing #############################################
 
@@ -30,6 +23,3 @@ create_results = invoke_http(
 print(type(results))
 print()
 print(results)
-
-print()
-print(create_results)
