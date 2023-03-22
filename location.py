@@ -112,6 +112,9 @@ def get_nearest_locations(latitude, longitude, locations):
     
     # Sort the list of locations by distance in ascending order and return the top 20 locations
     sorted_distances = sorted(distances, key=lambda x: x[1])
-    nearest_locations = [x[0] for x in sorted_distances[:14]]
+    nearest_locations = [x[0] for x in sorted_distances[:20]]
     print("End of get_nearest_locations")
     return nearest_locations
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
