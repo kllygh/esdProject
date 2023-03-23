@@ -1,8 +1,9 @@
 '''
 Things to remember to do:
--- Link this MS to rabbitMQ for activity logs & error handling
+-- Test the link for this MS to rabbitMQ for activity logs & error handling
 -- Link this MS to login (change the user ID in the database based on the firebase)
-
+-- Change the user Id to link with firebase
+-- Create a docker file for your current microservice
 '''
 #################### Import libraries ###############################################################################
 from flask import Flask, request, jsonify
