@@ -133,16 +133,16 @@
               <div class="col-12" v-if="hasBoxes">
                 <div class="row gx-3 h-30 align-items-center">
 
-                        <div v-for="box in boxes " class="col-sm-6 col-md-4 col-xl mb-5 h-30">
+                        <div v-for="box in boxes" class="col-sm-6 col-md-4 col-xl mb-5 h-30">
                           <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
                             <div class="card-body ps-0">
                               <h5 class="fw-bold text-1000 text-truncate mb-1">{{ box.boxID }}</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">{{ box.location }}</span></div>
+                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">{{ box.postTime }}</span></div>
                               <span class="text-1000 fw-bold"> {{ box.price }}</span>
                             </div>
                           </div>
                           <div class="d-grid gap-2">
-                            <a href="placeorder.html?value=978233295"  class="btn btn-lg btn-danger" >Order now</a>
+                            <a href="placeorder.html?value={{box.boxID }}"  class="btn btn-lg btn-danger" >Order now</a>
                           </div>
                         </div>
                 </div>         
@@ -473,11 +473,11 @@
     <!--  Vue-->
     <!-- ===============================================-->
     <script>
+
+      const location_URL = "http://localhost:5200/location";
       const box_URL = "http://localhost:5000/box/open";
-      const location_url = "http://localhost:5200/location";
-      const rest_URL = "http://localhost:5300/restaurant"
-
-
+      const rest_URL = "http://localhost:5300/restaurant";
+    
       const app = Vue.createApp({
           computed: {
               hasBoxes: function () {
@@ -490,6 +490,13 @@
                   //retrieve box data
                   boxID: "",
                   restaurant_id:"",
+                  price: "",
+                  postTime: "",
+                  postName:"",
+                  boxName: "",
+                  collectTime: "",
+                  description: "",
+                  quantity: "",
                   "boxes": [],
                   message: "There is a problem retrieving books data, please try again later.",
 
@@ -518,7 +525,7 @@
               getAllBoxes () {
                   // on Vue instance created, load the box list
                   const response =
-                      fetch(get_all_URL)
+                      fetch(box_URL)
                           .then(response => response.json())
                           .then(data => {
                               console.log(response);
@@ -547,7 +554,7 @@
               findBox () {
                   console.log(this.boxID);
                   const response =
-                      fetch(`${get_all_URL}/${this.boxID}`)
+                      fetch(`${box_URL}/${this.boxID}`)
                           .then(response => response.json())
                           .then(data => {
                               console.log(response);
@@ -572,7 +579,7 @@
               findRestaurant () {
                   console.log(this.restaurant_id);
                   const response =
-                      fetch(`${get_all_URL}/${this.restaurant_id}`)
+                      fetch(`${rest_URL}/${this.restaurant_id}`)
                           .then(response => response.json())
                           .then(data => {
                               console.log(response);
@@ -613,7 +620,7 @@
                       quantity: this.newquantity
                   });
 
-                  fetch(`${get_all_URL}/${this.newboxID}`,
+                  fetch(`${box_URL}/${this.newboxID}`,
                       {
                           method: "POST",
                           headers: {
