@@ -38,7 +38,7 @@
     <!-- ===============================================-->
     <!--    Main Content --> 
     <!-- ===============================================-->
-    <main class="main" id="top">
+    <main class="main" id="app">
       <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" data-navbar-on-scroll="data-navbar-on-scroll">
         <div class="container"><a class="navbar-brand d-inline-flex" href="index.html"><h2 class="text-1000 fs-3 fw-bold ms-2 text-gradient">Mystery Food Box</h2></a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
@@ -66,7 +66,9 @@
                 <div class="card-body">
                   <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                      <button class="nav-link mb-3" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false"><i class="fas fa-shopping-bag me-2"></i>Pickup</button>
+                      <button class="nav-link active mb-3" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true"><i class="fas fa-motorcycle me-2"></i>Nearby</button>
+                      <button class="nav-link mb-3" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false"><i class="fas fa-shopping-bag me-2"></i>FoodBox</button>
+                      <button class="nav-link mb-3" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false"><i class="fas fa-shopping-bag me-2"></i>Restaurant</button>
                     </div>
                   </nav>
                   <div class="tab-content mt-3" id="nav-tabContent">
@@ -75,11 +77,11 @@
                         <div class="col">
                           <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
                             <label class="visually-hidden" for="inputDelivery">Address</label>
-                            <input class="form-control input-box form-foodwagon-control" id="inputDelivery" type="text" placeholder="Enter Your Address" />
+                            <input class="form-control input-box form-foodwagon-control" id="inputAddress" type="text" placeholder="Address" />
                           </div>
                         </div>
                         <div class="d-grid gap-3 col-sm-auto">
-                          <button class="btn btn-danger" type="submit">Find Food</button>
+                          <button @click="findNearby ()" class="btn btn-danger" type="submit">Find Food</button>
                         </div>
                       </form>
                     </div>
@@ -87,12 +89,25 @@
                       <form class="row gx-4 gy-2 align-items-center">
                         <div class="col">
                           <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
-                            <label class="visually-hidden" for="inputPickup">Address</label>
-                            <input class="form-control input-box form-foodwagon-control" id="inputPickup" type="text" placeholder="Enter Your Address" />
+                            <label class="visually-hidden" for="inputPickup">FoodBox</label>
+                            <input class="form-control input-box form-foodwagon-control" id="inputBoxName" type="text" placeholder="Box Name" />
                           </div>
                         </div>
                         <div class="d-grid gap-3 col-sm-auto">
-                          <button class="btn btn-danger" type="submit">Find Food</button>
+                          <button @click="findBox ()" class="btn btn-danger" type="submit">Find Food</button>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                      <form class="row gx-4 gy-2 align-items-center">
+                        <div class="col">
+                          <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
+                            <label class="visually-hidden" for="inputPickup">Restaurant</label>
+                            <input class="form-control input-box form-foodwagon-control" id="inputRestaurant" type="text" placeholder="Restaurant Name" />
+                          </div>
+                        </div>
+                        <div class="d-grid gap-3 col-sm-auto">
+                          <button @click="findRestaurant()" class="btn btn-danger" type="submit">Find Food</button>
                         </div>
                       </form>
                     </div>
@@ -110,213 +125,30 @@
         <section class="py-4 overflow-hidden">
 
           <div class="container">
-            <div class="row h-100">
+            <div class="row">
               <div class="col-lg-7 mx-auto text-center mt-7 mb-5">
                 <h5 class="fw-bold fs-3 fs-lg-5 lh-sm">Today's Mystery Food Boxes</h5>
               </div>
-              <div class="col-12">
-                <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false" data-bs-interval="false">
-                  <div class="carousel-inner">
-                    <div class="carousel-item active" data-bs-interval="10000">
-                      <div class="row gx-3 h-100 align-items-center">
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
+
+              <div class="col-12" v-if="hasBoxes">
+                <div class="row gx-3 h-30 align-items-center">
+
+                        <div v-for="box in boxes " class="col-sm-6 col-md-4 col-xl mb-5 h-30">
                           <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
                             <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">$3.88</span>
+                              <h5 class="fw-bold text-1000 text-truncate mb-1">{{ box.boxID }}</h5>
+                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">{{ box.location }}</span></div>
+                              <span class="text-1000 fw-bold"> {{ box.price }}</span>
                             </div>
                           </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Top Sticks</span></div><span class="text-1000 fw-bold">$4.00</span>
-                            </div>
+                          <div class="d-grid gap-2">
+                            <a href="placeorder.html?value=978233295"  class="btn btn-lg btn-danger" >Order now</a>
                           </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
                         </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Cake World</span></div><span class="text-1000 fw-bold">$1.99</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy Sandwitch</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Fastfood Dine</span></div><span class="text-1000 fw-bold">$3.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Foody Man</span></div><span class="text-1000 fw-bold">$2.79</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="carousel-item" data-bs-interval="5000">
-                      <div class="row gx-3 h-100 align-items-center">
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">$3.88</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Top Sticks</span></div><span class="text-1000 fw-bold">$4.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Cake World</span></div><span class="text-1000 fw-bold">$1.99</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy Sandwitch</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Fastfood Dine</span></div><span class="text-1000 fw-bold">$3.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Foody Man</span></div><span class="text-1000 fw-bold">$2.79</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="carousel-item" data-bs-interval="3000">
-                      <div class="row gx-3 h-100 align-items-center">
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">$3.88</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Top Sticks</span></div><span class="text-1000 fw-bold">$4.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Cake World</span></div><span class="text-1000 fw-bold">$1.99</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy Sandwitch</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Fastfood Dine</span></div><span class="text-1000 fw-bold">$3.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Foody Man</span></div><span class="text-1000 fw-bold">$2.79</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="carousel-item">
-                      <div class="row gx-3 h-100 align-items-center">
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Burger Arena</span></div><span class="text-1000 fw-bold">$3.88</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Top Sticks</span></div><span class="text-1000 fw-bold">$4.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Cake World</span></div><span class="text-1000 fw-bold">$1.99</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy Sandwitch</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Fastfood Dine</span></div><span class="text-1000 fw-bold">$3.00</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                          <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100" src="assets/img/gallery/mystery_image.jpg" alt="..." />
-                            <div class="card-body ps-0">
-                              <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
-                              <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span class="text-primary">Foody Man</span></div><span class="text-1000 fw-bold">$2.79</span>
-                            </div>
-                          </div>
-                          <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!" role="button">Order now</a></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <button class="carousel-control-prev carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span class="carousel-control-prev-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
-                  <button class="carousel-control-next carousel-icon" type="button" data-bs-target="#carouselPopularItems" data-bs-slide="next"><span class="carousel-control-next-icon hover-top-shadow" aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
-                </div>
+                </div>         
+              </div>
+              <div class="text-danger" v-if="!hasBoxes">
+                {{ message }}
               </div>
             </div>
           </div><!-- end of .container-->
@@ -371,7 +203,7 @@
       <!-- ============================================-->
 
 
-
+      <!-- featured restaurants -->
       <section id="testimonial">
         <div class="container">
           <div class="row h-100">
@@ -636,6 +468,189 @@
     <!-- ===============================================-->
 
 
+
+    <!-- ===============================================-->
+    <!--  Vue-->
+    <!-- ===============================================-->
+    <script>
+      const box_URL = "http://localhost:5000/box/open";
+      const location_url = "http://localhost:5200/location";
+      const rest_URL = "http://localhost:5300/restaurant"
+
+
+      const app = Vue.createApp({
+          computed: {
+              hasBoxes: function () {
+                  return this.boxes.length > 0;
+              }
+          },
+          data() {
+              return {
+
+                  //retrieve box data
+                  boxID: "",
+                  restaurant_id:"",
+                  "boxes": [],
+                  message: "There is a problem retrieving books data, please try again later.",
+
+                  //add box data
+                  newboxName: "",
+                  newboxID: "",
+                  newprice: "",
+                  newrestaurant_id: "",
+                  newpostTime: "",
+                  newdescription: "",
+                  newquantity: "",
+                  newpostDate: "",
+                  newpostName: "",
+                  newcollectionTime: "",
+
+                  bookAdded: false,
+                  addBookError: "",
+
+
+              };
+          },
+
+          methods: {
+
+              // GET ALL BOXES
+              getAllBoxes () {
+                  // on Vue instance created, load the box list
+                  const response =
+                      fetch(get_all_URL)
+                          .then(response => response.json())
+                          .then(data => {
+                              console.log(response);
+                              if (data.code === 404) {
+                                  // no box in db
+                                  this.message = data.message;
+                              } 
+                              else {
+                                  this.boxes = data.data.boxes;
+                              }
+                          })
+                          .catch(error => {
+                              // Errors when calling the service; such as network error, 
+                              // service offline, etc
+                              console.log(this.message + error);
+
+                          });
+              },
+
+              created () {
+              // on Vue instance created, load the box list
+              this.getAllBoxes();
+              },
+
+              // GET A BOX WITH boxID
+              findBox () {
+                  console.log(this.boxID);
+                  const response =
+                      fetch(`${get_all_URL}/${this.boxID}`)
+                          .then(response => response.json())
+                          .then(data => {
+                              console.log(response);
+                              if (data.code === 404) {
+                                  // no box in db
+                                  this.message = data.message;
+                                  this.boxes = [];
+                              } else {
+                                  this.boxes = [data.data];
+                              }
+                          })
+                          .catch(error => {
+                              // Errors when calling the service; such as network error, 
+                              // service offline, etc
+                              console.log(this.message + error);
+
+                          });
+
+              },
+
+              // GET A FEW BOXES BASED ON RESTAURANT ID
+              findRestaurant () {
+                  console.log(this.restaurant_id);
+                  const response =
+                      fetch(`${get_all_URL}/${this.restaurant_id}`)
+                          .then(response => response.json())
+                          .then(data => {
+                              console.log(response);
+                              if (data.code === 404) {
+                                  // no box in db
+                                  this.message = data.message;
+                                  this.boxes = [];
+                              } else {
+                                  this.boxes = [data.data];
+                              }
+                          })
+                          .catch(error => {
+                              // Errors when calling the service; such as network error, 
+                              // service offline, etc
+                              console.log(this.message + error);
+
+                          });
+
+              },
+
+              // CREATE BOX 
+              addBox () {
+                  // reset data
+                  this.boxAdded = false;
+                  this.addBoxError = "";
+
+                  let jsonData = JSON.stringify({
+                      boxID: this.newboxID,
+                      boxName: this.newboxName,
+                      restaurant_id: this.restaurant_id,
+                      postTime: this.newpostTime,
+                      quantity: this.newquantity,
+                      collectionTime: this.newcollectionTime,
+                      price: this.newprice,
+                      description: this.newdescription,
+                      postName: this.newpostName,
+                      postDate: this.newpostDate,
+                      quantity: this.newquantity
+                  });
+
+                  fetch(`${get_all_URL}/${this.newboxID}`,
+                      {
+                          method: "POST",
+                          headers: {
+                              "Content-type": "application/json"
+                          },
+                          body: jsonData
+                      })
+                      .then(response => response.json())
+                      .then(data => {
+                          console.log(data);
+                          result = data.data;
+                          console.log(result);
+                          // 3 cases
+                          switch (data.code) {
+                              case 201:
+                                  this.boxAdded = true;
+
+                                  // refresh book list
+                                  this.getAllBoxes();
+
+                                  // an alternate way is to add this one element into this.books
+                                  break;
+
+                              case 400:
+                              case 500:
+                                  this.addBoxError = data.message;
+                                  break;
+                              default:
+                                  throw `${data.code}: ${data.message}`;
+                          }
+                      })
+              },
+
+          }
+      });
+      const vm = app.mount('#app');
+  </script>
 
 
     <!-- ===============================================-->
