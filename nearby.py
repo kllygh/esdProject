@@ -38,13 +38,13 @@ def near_by():
         try:
             #customer_location: refers to the location that the customer gave {'cust_location': '30 Sembawang Dr, Singapore 757713'}
             customer_location = request.get_json()
-            customer_location = json.dumps(customer_location)
-            print("\nReceived Customer's location in JSON:", customer_location)
+            print("\nReceived an request in JSON:", customer_location)
 
             # do the actual work
-            result = processNearByLocation(json.dumps(customer_location))
+            customer_location = customer_location["cust_location"]
+            result = processNearByLocation(customer_location)
             code = result["code"]
-            message = json.dumps(result)
+            message = json.dumps(result['data'])
 
             ######################## Send to AMQP ##########################################
             if code not in range(200, 300):
@@ -52,14 +52,14 @@ def near_by():
                 updateActivityandError(code, message, result, routing_key)
                 return {
                     "code": 500,
-                    "data": {"cancel_order_result": result},
+                    "data": result,
                     "message": "Nearby Microservice failure sent for error handling."
                 }
             routing_key = 'retrieveDetails.info'
             updateActivityandError(code, message, result, routing_key)
             ####################### End of AMQP ##########################################
 
-            return jsonify(result), result["code"]
+            return jsonify(message), result["code"]
 
         except Exception as e:
             # Unexpected error in code
@@ -87,8 +87,11 @@ def processNearByLocation(customer_location):
     print('\n-----Invoking Mystery Box microservice-----')
     box_result = invoke_http(box_URL)
     print(box_result)
+    print("this is the box result",box_result)
     # response_dict = json.loads(box_result)
     boxes_list = box_result['data']['boxes']
+    print("this is the box list",boxes_list)
+    
     print('\n-----test-----')
     # create an empty list to store the restaurant IDs
     restaurant_ids = []
@@ -130,5 +133,5 @@ def updateActivityandError(code, message, result, rKey):
 #################### Execute this program if it is run as a main script (not by 'import') ############################
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
-          " for placing an order...")
+        " for placing an order...")
     app.run(host="0.0.0.0", port=5100, debug=True)

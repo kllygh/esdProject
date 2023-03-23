@@ -5,7 +5,7 @@ from invokes import invoke_http
 #################### NearyBy Complex MS Testing ##################################################
 
 #invoke ... microservice to ...
-body = {'cust_location':"30 Sembawang Dr, Singapore 757713"}
+body = {"cust_location":"30 Sembawang Dr, Singapore 757713"}
 results = invoke_http("http://localhost:5100/near_by",method="POST",json=body)
 
 #################### Place an Order Complex MS Testing #############################################
