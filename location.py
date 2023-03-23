@@ -79,10 +79,23 @@ def find_nearest_location():
 
     # check if the .json thing works for here
     nearest_locations = top_20_locations
-    return jsonify({
-        'status': 'success',
-        'nearest_locations': nearest_locations
-    })
+
+    # return the status here
+    if nearest_locations:
+        return jsonify(
+            {
+                "code": 200,
+                "data": nearest_locations
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": nearest_locations,
+            "message": "Unable to suggest top 20 nearest locaion."
+        }
+    ), 404
+
 
 
 def haversine(lat1, lon1, lat2, lon2):

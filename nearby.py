@@ -1,9 +1,7 @@
 '''
 Things to remember to do:
--- Link this MS to login
--- Link this MS to rabbitMQ for activity logs
--- check line 101 to see if the return code is correct
--- Do we need to do an error handling MS here?
+-- Link this MS to rabbitMQ for activity logs & error handling
+-- Link this MS to login (change the user ID in the database based on the firebase)
 
 '''
 #################### Import libraries ###############################################################################
@@ -97,10 +95,7 @@ def processNearByLocation(customer_location):
     print('\n-----End of Location microservice-----')
 
     #check if this return way is correct
-    return {
-        'code': '200',
-        'data': nearby_locations
-        }
+    return nearby_locations
 
 
 # Execute this program if it is run as a main script (not by 'import')
