@@ -1,8 +1,9 @@
 '''
 Things to remember to do:
--- Link this MS to rabbitMQ for activity logs & error handling
+-- Test the link for this MS to rabbitMQ for activity logs & error handling
 -- Link this MS to login (change the user ID in the database based on the firebase)
-
+-- Change the user Id to link with firebase
+-- Create a docker file for your current microservice
 '''
 #################### Import libraries ###############################################################################
 from flask import Flask, request, jsonify
@@ -14,6 +15,10 @@ import requests
 from invokes import invoke_http
 
 import json
+
+import pika
+import json
+import amqp_setup
 
 app = Flask(__name__)
 CORS(app)
@@ -38,7 +43,22 @@ def near_by():
 
             # do the actual work
             result = processNearByLocation(json.dumps(customer_location))
-            print(result)
+            code = result["code"]
+            message = json.dumps(result)
+
+            ######################## Send to AMQP ##########################################
+            if code not in range(200, 300):
+                routing_key = 'retrieveDetails.error'
+                updateActivityandError(code, message, result, routing_key)
+                return {
+                    "code": 500,
+                    "data": {"cancel_order_result": result},
+                    "message": "Nearby Microservice failure sent for error handling."
+                }
+            routing_key = 'retrieveDetails.info'
+            updateActivityandError(code, message, result, routing_key)
+            ####################### End of AMQP ##########################################
+
             return jsonify(result), result["code"]
 
         except Exception as e:
@@ -97,8 +117,17 @@ def processNearByLocation(customer_location):
     #check if this return way is correct
     return nearby_locations
 
+#################### AMQP activity log and error handling ############################################################
+def updateActivityandError(code, message, result, rKey):
+    amqp_setup.check_setup()
+    print('\n\n-----Publishing the error message with routing_key=' + rKey + '-----')
 
-# Execute this program if it is run as a main script (not by 'import')
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key=rKey, 
+        body=message, properties=pika.BasicProperties(delivery_mode = 2))      
+    print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+        code), result)
+
+#################### Execute this program if it is run as a main script (not by 'import') ############################
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
           " for placing an order...")
