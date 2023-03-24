@@ -26,7 +26,7 @@ CORS(app)
 #################### Microservices URL #############################################################################
 
 location_URL = "http://localhost:5200/location"
-box_URL = "http://localhost:5000/box/open"
+box_URL = "http://127.0.0.1:5000/box/open"
 rest_URL = "http://localhost:5300/restaurant"
 
 #################### Call on Near By Complex MS ####################################################################
