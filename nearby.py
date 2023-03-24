@@ -1,6 +1,5 @@
 '''
 Things to remember to do:
--- Test the link for this MS to rabbitMQ for activity logs & error handling
 -- Link this MS to login (change the user ID in the database based on the firebase)
 -- Change the user Id to link with firebase
 -- Create a docker file for your current microservice
@@ -26,7 +25,7 @@ CORS(app)
 #################### Microservices URL #############################################################################
 
 location_URL = "http://localhost:5200/location"
-box_URL = "http://127.0.0.1:5000/box/open"
+box_URL = "http://127.0.0.1:5000/box"
 rest_URL = "http://localhost:5300/restaurant"
 
 #################### Call on Near By Complex MS ####################################################################
