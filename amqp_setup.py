@@ -15,19 +15,19 @@ channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype, dura
 
 queue_name='Activity_log'
 channel.queue_declare(queue=queue_name,durable=True)
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#')
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#.info')
 
 queue_name="Error"
 channel.queue_declare(queue=queue_name,durable=True)
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='*.error')
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#.error')
 
 queue_name="Notification"
 channel.queue_declare(queue=queue_name, durable=True)
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='.notify')
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#.notify')
 
 queue_name="Refund"
 channel.queue_declare(queue=queue_name, durable=True)
-channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='.refund')
+channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='#.refund')
 
 queue_name="Refund_Reply"
 channel.queue_declare(queue=queue_name, durable=True)

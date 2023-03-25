@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS `box` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `quantity`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
-(1, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS A','2023-03-24'),
-(2, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS B','2023-03-24'),
+(1, 'Subway', 82763492, 23418923, '2023-03-24 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS A','2023-03-24'),
+(2, 'Subway', 82763492, 23418923, '2023-03-24 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS B','2023-03-24'),
 (3, 'SuShiExpress', 82763491, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Sushi Express-PLQ A','2023-03-24'),
 (4, 'SuShiExpress', 82763491, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Sushi Express-PLQ A','2023-03-24'),
 (5, 'SuShiExpress', 82763491, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Sushi Express-PLQ C','2023-03-24'),
