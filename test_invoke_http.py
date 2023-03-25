@@ -16,6 +16,7 @@ results = invoke_http("http://localhost:5100/near_by",method="POST",json=body)
 #################### Cancel an Order Complex MS Testing #############################################
 
 # have not yet added @jx, amanda if needed!
+results = invoke_http("http://localhost:5500/cancel_order/2",method="POST")
 
 
 #################### Printing out results created ##################################################
