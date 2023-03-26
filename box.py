@@ -22,20 +22,20 @@ class Box(db.Model):
     restaurant_id = db.Column(db.Integer, nullable=False)
     cust_id = db.Column(db.Integer, nullable=False)
     postTime = db.Column(db.DateTime, nullable=False)
-    inventory = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
     collectionTime = db.Column(db.DateTime, nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
     description = db.Column(db.String(64), nullable=False)
     postName = db.Column(db.String(30), nullable=False)
     postDate = db.Column(db.Date, nullable=False)
 
-    def __intit__(self, boxID, boxName, restaurant_id, cust_id, postTime, inventory, collectionTime, price, description, postName, postDate):
+    def __intit__(self, boxID, boxName, restaurant_id, cust_id, postTime, quantity, collectionTime, price, description, postName, postDate):
         self.boxID = boxID
         self.boxName = boxName
         self.restaurant_id = restaurant_id
         self.cust_id = cust_id
         self.postTime = postTime
-        self.inventory = inventory
+        self.quantity = quantity
         self.collectionTime = collectionTime
         self.price = price
         self.description = description
@@ -48,7 +48,7 @@ class Box(db.Model):
                 "restaurant_id": self.restaurant_id,
                 "cust_id": self.cust_id,
                 "postTime": self.postTime,
-                "inventory": self.inventory,
+                "quantity": self.quantity,
                 "collectionTime": self.collectionTime,
                 "price": self.price,
                 "description": self.description,
@@ -59,7 +59,7 @@ class Box(db.Model):
 # get all posts - filter based on date
 
 
-@app.route("/box/open")
+@app.route("/box")
 def get_all():
     boxlist = Box.query.filter_by(postDate=date.today()).all()
     if len(boxlist):
@@ -78,30 +78,9 @@ def get_all():
         }
     ), 404
 
-# get post's inventory NOTE
-
-
-@app.route("/box/inventory/<int:boxID>/<int:quantity>")
-def check_inventory(boxID, quantity):
-    box = Box.query.filter_by(boxID=boxID).first()
-    box_json = box.json()
-    if box_json["inventory"] < quantity:
-        return jsonify(
-            {
-                "code": 400,
-                "message": "There is insufficient inventory ."
-            }
-        )
-    return jsonify(
-        {
-            "code": 200,
-            "data": box.json(),
-            "message": "There is sufficient inventory."
-        }
-    )
-
-
 # get a post
+
+
 @app.route("/box/<int:boxID>")
 def find_by_boxID(boxID):
     box = Box.query.filter_by(boxID=boxID).first()
@@ -127,15 +106,14 @@ def update_box(boxID):
     box = Box.query.filter_by(boxID=boxID).first()
     if box:
         data = request.get_json()
-        if data['inventory']:
-            box.inventory = data['inventory']
+        if data['quantity']:
+            box.quantity = data['quantity']
 
         db.session.commit()
         return jsonify(
             {
                 "code": 200,
-                "data": box.json(),
-                "message": "Updated Inventory successfully."
+                "data": box.json()
             }
         )
     return jsonify(
@@ -200,4 +178,4 @@ def find_by_restaurantID(restaurant_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

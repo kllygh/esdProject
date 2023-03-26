@@ -29,7 +29,7 @@ channel.queue_declare(queue=queue_name, durable=True)
 channel.queue_bind(exchange=exchangename, queue=queue_name,
                    routing_key='#.notify')
 
-queue_name = "Error"
+queue_name = "Refund"
 channel.queue_declare(queue=queue_name, durable=True)
 channel.queue_bind(exchange=exchangename, queue=queue_name,
                    routing_key='#.refund')

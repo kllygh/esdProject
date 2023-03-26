@@ -26,7 +26,7 @@ class Order(db.Model):
     customer_number = db.Column(db.Integer, nullable=False)
     customer_id = db.Column(db.Integer, nullable=False)
     restaurant_id = db.Column(db.Integer, nullable=False)
-    boxID = db.Column(db.Integer, nullable=False)
+    boxID = db.Column(db.Integer, nullable=False)  # change to boxID
     charge_id = db.Column(db.String(50), nullable=False, default='NaN')
     refund_id = db.Column(db.String(50), nullable=False, default='NaN')
     quantity = db.Column(db.Integer, nullable=False)
@@ -139,8 +139,7 @@ def create_order():
     return jsonify(
         {
             "code": 201,
-            "data": order.json(),
-            "message": "Order created"
+            "data": order.json()
         }
     ), 201
 
