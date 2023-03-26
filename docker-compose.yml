@@ -1,0 +1,121 @@
+# Not too sure about the payment side
+# check dburl if they are correct
+# AMQP side of MS, how should I do it?
+# place an order ms also not sure
+
+version: "3.8"
+
+services:
+
+#################################################### AMQP's Microservices ####################################################
+
+  ######################################
+  # Activity: The Activity microservice
+  ######################################
+  activity:
+    image: esdProj/activity:1.0
+    restart: always
+    environment:
+      activityURL: 
+
+  ######################################
+  # Notification: The Notification microservice
+  ######################################
+  notification:
+    image: esdProj/notification:1.0
+    restart: always
+    environment:
+      notificationURL: 
+
+  ######################################
+  # Error: The Error microservice
+  ######################################
+  error:
+    image: esdProj/error:1.0
+    restart: always
+    environment:
+      errorURL: 
+
+  ##################################################
+  # payment: The payment microservice
+  ##################################################
+  payment:
+    image: esdProj/payment:1.0
+    restart: always
+    environment:
+      paymentURL: 
+
+############################################ Invocation based's Microservices #################################################
+
+  ####################################
+  # Box: The Mystery Box microservice
+  ####################################
+  box:
+    image: esdProj/box:1.0
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/box
+      boxURL: http://127.0.0.1:5000/box
+
+  ##########################################
+  # Restaurant: The Restaurant microservice
+  ##########################################
+  restaurant:
+    image: esdProj/restaurant:1.0
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
+      restURL: http://localhost:5300/restaurant
+
+  ########################################
+  # Location: The Location microservice
+  ########################################
+  location:
+    image: esdProj/location:1.0
+    restart: always
+    environment:
+      locationURL: http://localhost:5200/location
+
+  ###################################
+  # Nearby: The Nearby microservice
+  ###################################
+  nearby:
+    image: esdProj/nearby:1.0
+    depends_on:
+      - location
+      - box
+      - restaurant
+    environment:
+      nearbyURL: http://localhost:5100/near_by
+
+  ##################################################
+  # order: The order microservice
+  ##################################################
+  order:
+    image: esdProj/order:1.0
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/order
+      orderURL: http://localhost:5001/order
+
+  ##################################################
+  # Cancel an order: The cancel_order microservice
+  ##################################################
+  cancel_order:
+    image: esdProj/cancel_order:1.0
+    depends_on:
+      - box
+      - order
+    environment:
+      nearbyURL: http://localhost:5500/cancel_order
+
+  ##################################################
+  # place_an_order: The place_an_order microservice
+  ##################################################
+  place_an_order:
+    image: esdProj/place_an_order:1.0
+    depends_on:
+      - box
+      - order
+    environment:
+      nearbyURL: 
