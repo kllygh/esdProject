@@ -53,14 +53,19 @@
                 <p class="mb-0 fw-bold text-lg-center">Deliver to: <i class="fas fa-map-marker-alt text-warning mx-2"></i><span class="fw-normal">Current Location </span><span>Mirpur 1 Bus Stand, Dhaka</span></p>
               </div>
               <form class="d-flex mt-4 mt-lg-0 ms-lg-auto ms-xl-0">
-                <div class="input-group-icon pe-2"><i class="fas fa-search input-box-icon text-primary"></i>
+                <div class="input-group-icon pe-2" style="height: 20%;"><i class="fas fa-search input-box-icon text-primary"></i>
                   <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food" aria-label="Search" />
                 </div>
-                <button class="btn btn-white shadow-warning text-warning" type="submit"> <i class="fas fa-user me-2"></i>Profile</button>
+                <div class="input-group-icon pe-2">
+                  <button class="btn btn-white shadow-warning text-warning" type="submit"> <i class="fas fa-user me-2"></i>Profile</button>
+                </div>
+                <button class="btn btn-white shadow-warning text-warning" type="submit"> 
+                  <a id="logout" style="cursor: pointer;"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                </button>
               </form>
             </div>
           </div>
-        </nav>
+        </nav>  
         <section class="py-5 overflow-hidden bg-primary" id="home">
           <div class="container">
             <div class="row flex-center">
@@ -499,7 +504,64 @@
       }
       console.log(localStorage.getItem('uid')) 
       // constant for account login
+    </script>
+
+
+    <!---------------------------------------- FIREBASE FOR LOGOUT -------------------------------------------->
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-firestore-compat.js"></script>
+    <script type="module"> 
     
+    // ----------------------------------------------------LOGOUT-----------------------------------------------//
+      // Import the functions you need from the SDKs you need
+      import {initializeApp} from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
+      import {
+        getAuth,
+        browserLocalPersistence,
+        signInWithPopup,
+        GoogleAuthProvider,
+        signOut,
+        setPersistence
+      } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-auth.js";
+      //import {getDatabase, set, ref, update} from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+
+
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+          // Your configs
+              apiKey: "AIzaSyCLWmg-X8gl75JxCVz57jOIekeqSUk6XUY",
+              authDomain: "adventuretime-934a2.firebaseapp.com",
+              projectId: "adventuretime-934a2",
+              storageBucket: "adventuretime-934a2.appspot.com",
+              messagingSenderId: "168230082500",
+              appId: "1:168230082500:web:6fbd2239d875c99c467691",
+              measurementId: "G-MXMNLZZLM8",
+              databaseURL: "https://adventuretime-934a2-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      };
+
+      // Initialize Firebase
+        const firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+        document.getElementById('logout')
+        .addEventListener('click', function () {
+            signOut(auth).then(() => {
+              //alert("Sign out successful")
+              localStorage.removeItem('uid')
+              sessionStorage.setItem('logout', true)
+              window.location.href = 'login.html'
+            }).catch((error) => {
+                // An error happened.
+                console.log(error);
+            });
+        });
+    </script>
+    <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
+
+    <script>
       const app = Vue.createApp({
           computed: {
               hasBoxes: function () {
