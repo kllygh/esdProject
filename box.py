@@ -57,9 +57,13 @@ class Box(db.Model):
                 }
 
 # get all posts - filter based on date
+<<<<<<< HEAD
 
 
 @app.route("/box/open")
+=======
+@app.route("/box")
+>>>>>>> c796eaf1976b442f37001b20113cb022bfa21729
 def get_all():
     boxlist = Box.query.filter_by(postDate=date.today()).all()
     if len(boxlist):

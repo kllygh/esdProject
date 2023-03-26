@@ -1,11 +1,8 @@
 '''
 Things to remember to do:
--- Update the database on box side and restaurant side to ensure it helps to illustrate our scenario
--- Link this MS to login
--- Link this MS to rabbitMQ for activity logs
--- Do we need to do an error handling MS here?
--- Check if the near_by should be GET or POST? Confused with this still
-
+-- Link this MS to login (change the user ID in the database based on the firebase)
+-- Change the user Id to link with firebase
+-- Create a docker file for your current microservice
 '''
 #################### Import libraries ###############################################################################
 from flask import Flask, request, jsonify
@@ -18,14 +15,18 @@ from invokes import invoke_http
 
 import json
 
+import pika
+import json
+import amqp_setup
+
 app = Flask(__name__)
 CORS(app)
 
 #################### Microservices URL #############################################################################
 
-location_URL = "http://localhost:5000/location"
-box_URL = "http://localhost:5000/open"
-rest_URL = "http://localhost:5000/restaurant"
+location_URL = "http://localhost:5200/location"
+box_URL = "http://127.0.0.1:5000/box"
+rest_URL = "http://localhost:5300/restaurant"
 
 #################### Call on Near By Complex MS ####################################################################
 
@@ -36,11 +37,28 @@ def near_by():
         try:
             #customer_location: refers to the location that the customer gave {'cust_location': '30 Sembawang Dr, Singapore 757713'}
             customer_location = request.get_json()
-            print("\nReceived Customer's location in JSON:", customer_location)
+            print("\nReceived an request in JSON:", customer_location)
 
             # do the actual work
+            customer_location = customer_location["cust_location"]
             result = processNearByLocation(customer_location)
-            return jsonify(result), result["code"]
+            code = result["code"]
+            message = json.dumps(result['data'])
+
+            ######################## Send to AMQP ##########################################
+            if code not in range(200, 300):
+                routing_key = 'retrieveDetails.error'
+                updateActivityandError(code, message, result, routing_key)
+                return {
+                    "code": 500,
+                    "data": result,
+                    "message": "Nearby Microservice failure sent for error handling."
+                }
+            routing_key = 'retrieveDetails.info'
+            updateActivityandError(code, message, result, routing_key)
+            ####################### End of AMQP ##########################################
+
+            return jsonify(message), result["code"]
 
         except Exception as e:
             # Unexpected error in code
@@ -67,8 +85,13 @@ def processNearByLocation(customer_location):
     
     print('\n-----Invoking Mystery Box microservice-----')
     box_result = invoke_http(box_URL)
-    response_dict = json.loads(box_result)
-    boxes_list = response_dict['data']['boxes']
+    print(box_result)
+    print("this is the box result",box_result)
+    # response_dict = json.loads(box_result)
+    boxes_list = box_result['data']['boxes']
+    print("this is the box list",boxes_list)
+    
+    print('\n-----test-----')
     # create an empty list to store the restaurant IDs
     restaurant_ids = []
     for box in boxes_list:
@@ -80,9 +103,12 @@ def processNearByLocation(customer_location):
     
     print('\n-----Invoking Restaurant microservice-----')
     # restaurant_locations: Returns the list of dictionary of the restaurant information ~ restaurant that posted
-    restaurant_locations = invoke_http(rest_URL, method="POST", json=json.dumps(restaurant_ids))
+    msg = {
+        "restaurant_ids": restaurant_ids
+        }
+    restaurant_locations = invoke_http(rest_URL, method="POST", json=msg)
     print('restaurant_locations:',restaurant_locations)
-    print('\n-----End of Mystery Box microservice-----')
+    print('\n-----End of Restaurant microservice-----')
 
     ###### 4. Ask Location MS for top 20 nearest recommendation based on restaurant_location array #################
     print('\n-----Invoking Location microservice-----')
@@ -90,9 +116,21 @@ def processNearByLocation(customer_location):
     print('order_result:',nearby_locations)
     print('\n-----End of Location microservice-----')
 
+    #check if this return way is correct
+    return nearby_locations
 
-# Execute this program if it is run as a main script (not by 'import')
+#################### AMQP activity log and error handling ############################################################
+def updateActivityandError(code, message, result, rKey):
+    amqp_setup.check_setup()
+    print('\n\n-----Publishing the error message with routing_key=' + rKey + '-----')
+
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key=rKey, 
+        body=message, properties=pika.BasicProperties(delivery_mode = 2))      
+    print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+        code), result)
+
+#################### Execute this program if it is run as a main script (not by 'import') ############################
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
-          " for placing an order...")
+        " for placing an order...")
     app.run(host="0.0.0.0", port=5100, debug=True)

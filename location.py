@@ -52,7 +52,7 @@ def find_nearest_location():
 
     print("Start of find_nearest_location")
     data = request.json # {starting_loc:"1 hack drive, menlo park, CA" , rest_loc:[{lat:...., lng:.....,rest_id:.....},{lat:...., lng:.....},{lat:...., lng:.....}] }
-    print(data)
+   # print(data)
 
     # return ({'lat':lat, 'lng': lon})
     data["starting_location"] = get_cust_location(data.get('starting_location'))
@@ -68,17 +68,34 @@ def find_nearest_location():
     # restaurant_location = data['restaurant_location'] #make sure that this is in the complex MS and under payload 
 
     customer_location = data.get('starting_location') #make sure that this is in the complex MS and under payload 
-    restaurant_location = data.get('restaurant_location') #make sure that this is in the complex MS and under payload 
+    restaurant_location = data.get('restaurant_location')['data'] #make sure that this is in the complex MS and under payload
+    print("THIS IS THE LOCATIONS")
+    print(customer_location) 
+    print(restaurant_location)
+    print("THIS IS THE LOCATIONS END")
 
     # process the locations
     top_20_locations = get_nearest_locations(customer_location['lat'],customer_location['lng'],restaurant_location)
 
     # check if the .json thing works for here
     nearest_locations = top_20_locations
-    return jsonify({
-        'status': 'success',
-        'nearest_locations': nearest_locations
-    })
+
+    # return the status here
+    if nearest_locations:
+        return jsonify(
+            {
+                "code": 200,
+                "data": nearest_locations
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": nearest_locations,
+            "message": "Unable to suggest top 20 nearest locaion."
+        }
+    ), 404
+
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -101,13 +118,15 @@ def haversine(lat1, lon1, lat2, lon2):
 
 def get_nearest_locations(latitude, longitude, locations):
     print("Start of get_nearest_locations")
+    # print(type(latitude))
+    # print(type(longitude))
     """
     Get the nearest top 20 locations based on the provided latitude, longitude, and list of locations
     """
     # Calculate distances between the given location and all locations in the list
     distances = []
     for location in locations:
-        dist = haversine(latitude, longitude, location['lat'], location['lng'])
+        dist = haversine(latitude, longitude, location[3], location[4])
         distances.append((location, dist))
     
     # Sort the list of locations by distance in ascending order and return the top 20 locations
@@ -117,4 +136,4 @@ def get_nearest_locations(latitude, longitude, locations):
     return nearest_locations
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5200, debug=True)
