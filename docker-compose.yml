@@ -2,6 +2,7 @@
 # check dburl if they are correct
 # AMQP side of MS, how should I do it?
 # place an order ms also not sure
+# ask about the names of the image eg activity_log VS activity, must it be the same?
 
 version: "3.8"
 
