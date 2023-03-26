@@ -45,12 +45,7 @@ CREATE TABLE IF NOT EXISTS `box` (
   PRIMARY KEY (`boxID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-<<<<<<< HEAD
 INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `inventory`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
-(1782487, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19'),
-(31243123, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19');
-=======
-INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `quantity`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
 (1, 'Subway', 82763492, 23418923, '2023-03-26 21:43:02', 2, '2023-03-26 21:43:02', '11', 'nil', 'Subway-PS A','2023-03-26'),
 (2, 'Subway', 82763492, 23418923, '2023-03-26 21:43:02', 2, '2023-03-26 21:43:02', '11', 'nil', 'Subway-PS B','2023-03-26'),
 (3, 'SuShiExpress', 82763491, 23418923, '2023-03-26 21:43:02', 2, '2023-03-26 21:43:02', '11', 'nil', 'Sushi Express-PLQ A','2023-03-26'),
@@ -91,7 +86,6 @@ INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `
 (37, 'Four Leaves', 82963493, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Four Leaves - YTP A','2023-03-24'),
 (38, 'Breadtalk', 82963494, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Breadtalk - JKC A','2023-03-24');
 
->>>>>>> c796eaf1976b442f37001b20113cb022bfa21729
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
