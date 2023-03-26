@@ -43,15 +43,29 @@
               <div class="card-header bg-transparent pb-5">
                 <div class="text-muted text-center mt-2 mb-3"><small>Making a refund for your order</small></div>
                 <div id="content">
-                    <h1 id="Restaurant">Restaurant:</h1><br>
-                    <h1 id="Quantity">Quantity:</h1><br>
-                    <h1 id="totalPrice">Total Price:</h1><br>
-                    <h1 id="PaymentMethod">Payment method:</h1><br>
+                    <h1 id="Restaurant">Restaurant: {{ Restaurant }}</h1><br>
+                    <h1 id="Quantity">Quantity: {{ Quantity }}</h1><br>
+                    <h1 id="totalPrice">Total Price: {{ TotalPrice }}</h1><br>
+                    <h1 id="PaymentMethod">Payment method: {{PaymentMethod }}</h1><br>
                 </div>
 
                 <a id="refund" href="refund" type="button" class="btn btn-primary my-4 " >Refund</a>
     </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+      const { createApp } = Vue
 
+      createApp({
+        data() {
+            return {
+                Restaurent: "",
+                Quantity: "",
+                TotalPrice: "",
+                PaymentMethod:""
+           }
+        }
+      }).mount('#app')
+    </script>
 
 
 
