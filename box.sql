@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `box` (
   `restaurant_id` int NOT NULL,
   `cust_id` int NOT NULL,
   `postTime` datetime NOT NULL,
-  `quantity` int NOT NULL,
+  `inventory` int NOT NULL,
   `collectionTime` datetime NOT NULL,
   `price` decimal(10,0) NOT NULL,
   `description` varchar(64) DEFAULT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `box` (
   PRIMARY KEY (`boxID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `quantity`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
+INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `inventory`, `collectionTime`, `price`, `description`, `postName`,`postDate`) VALUES
 (1782487, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19'),
 (31243123, 'Subway', 82763492, 23418923, '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Subway-PS','2023-03-19');
 
