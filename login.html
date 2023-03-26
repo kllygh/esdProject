@@ -38,68 +38,75 @@
             <div class="container mt--8 pb-5">
             <div class="row justify-content-center">
                 <div class="col-lg-5 col-md-7">
-                <div class="card bg-secondary shadow border-0">
-                    <div class="card-header bg-transparent pb-5">
-                    <div class="text-muted text-center mt-2 mb-3"><small>Select Account Type</small></div>
-                    <div class="btn-wrapper text-center">
-                        <a href="#" class="btn btn-neutral btn-icon">
-                        <span class="btn-inner--icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIBRy4XVdyGLUPL1EQp9UAfZAYEn_7FCBONA&usqp=CAU"></span>
-                        <span class="btn-inner--text">Restaurant</span>
-                        </a>
-                        <a href="#" class="btn btn-neutral btn-icon">
-                        <span class="btn-inner--icon"><img src="https://thumbs.dreamstime.com/b/customer-icon-188113403.jpg"></span>
-                        <span class="btn-inner--text">Customer</span>
-                        </a>
-                    </div>
-                    </div>
-                    <div class="card-body px-lg-5 py-lg-5">
-                    <div class="text-center text-muted mb-4">
-                        <small>Or sign in with credentials</small>
-                    </div>
-                    <form role="form">
-                        <div class="form-group mb-3">
-                        <div class="input-group input-group-alternative">
-                            <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                    <div class="card bg-secondary shadow border-0">
+                        <div class="card-header bg-transparent pb-5">
+                            <div class="text-muted text-center mt-2 mb-3"><small>Select Account Type</small></div>
+                            <div class="btn-wrapper text-center">
+                                <a href="#" class="btn btn-neutral btn-icon">
+                                <span class="btn-inner--icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIBRy4XVdyGLUPL1EQp9UAfZAYEn_7FCBONA&usqp=CAU"></span>
+                                <span class="btn-inner--text">Restaurant</span>
+                                </a>
+                                <a href="#" class="btn btn-neutral btn-icon">
+                                <span class="btn-inner--icon"><img src="https://thumbs.dreamstime.com/b/customer-icon-188113403.jpg"></span>
+                                <span class="btn-inner--text">Customer</span>
+                                </a>
                             </div>
-                            <input id="email" class="form-control" placeholder="Email" type="text">
                         </div>
+
+                        <div class="row text-center my-4 border bg-light">
+                            <button type="submit" class="btn my-2 col-12 px-4 btn-neutral" id="submit" style="background-color: white;border-color: white;">
+                                <img src="google-icon.png" alt="Google icon" width="40" 
+                                height="40"/> &nbsp;Sign in with Google
+                            </button>
                         </div>
-                        <div class="form-group">
-                        <div class="input-group input-group-alternative">
-                            <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+
+                        <div class="text-center text-muted mb-4">
+                            <small>Or sign in with credentials</small>
+                        </div>
+                        <form role="form" class="px-3">
+                            <div class="form-group mb-3">
+                            <div class="input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                </div>
+                                <input id="email" class="form-control" placeholder="Email" type="text">
                             </div>
-                            <input id="password" class="form-control" placeholder="Password" type="password">
+                            </div>
+                            <div class="form-group">
+                            <div class="input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                                </div>
+                                <input id="password" class="form-control" placeholder="Password" type="password">
+                            </div>
+                            </div>
+                            <div class="custom-control custom-control-alternative custom-checkbox">
+                            <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
+                            <label class="custom-control-label" for=" customCheckLogin">
+                                <span class="text-muted">Remember me</span>
+                            </label>
+                            </div>
+                            <div class="text-center">
+                            <a href="index.html" type="button" class="btn btn-primary my-4" id="signin">Sign in</a>
+                            </div>
+                        </form>
                         </div>
-                        </div>
-                        <div class="custom-control custom-control-alternative custom-checkbox">
-                        <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
-                        <label class="custom-control-label" for=" customCheckLogin">
-                            <span class="text-muted">Remember me</span>
-                        </label>
-                        </div>
-                        <div class="text-center">
-                        <a href="index.html" type="button" class="btn btn-primary my-4" id="submit">Sign in</a>
-                        </div>
-                    </form>
                     </div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-6">
-                    <a href="#" class="text-dark"><small>Forgot password?</small></a>
+                    <div class="col-4">
+                        <a href="#" class="text-dark"><small>Forgot password?</small></a>
                     </div>
-                    <div class="col-6 text-right">
-                    <a href="#" class="text-dark"><small>Create new account</small></a>
+                    <div class="col-4 text-right">
+                        <a href="#" class="text-dark"><small>Create new account</small></a>
                     </div>
-                </div>
                 </div>
             </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="py-5">
+        <footer class="py-2">
             <div class="container">
             <div class="row align-items-center justify-content-xl-between">
                 <div class="col-xl-6">
@@ -120,14 +127,14 @@
             import {initializeApp} from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
             import {
                 getAuth,
-                createUserWithEmailAndPassword,
-                signInWithEmailAndPassword,
+                signInWithPopup,
+                GoogleAuthProvider,
                 signOut,
             } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-auth.js";
-            import {getDatabase, set, ref, update} from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+            // import {getDatabase, set, ref, update} from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
         
         
-            // TODO: Add SDKs for Firebase products that you want to use
+            // TODO: Add SDKs for Firebase products that we want to use
             // https://firebase.google.com/docs/web/setup#available-libraries
         
             // Your web app's Firebase configuration
@@ -146,10 +153,34 @@
             // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             const auth = getAuth();
-            const database = getDatabase(app);
+            // const database = getDatabase(app);
+            const provider = new GoogleAuthProvider();
             
-            // SIGN IN WITH FACEBOOK
-            localStorage.setItem('uid', user.uid)
+            // SIGN IN WITH GOOGLE
+            submit.addEventListener('click', (e) => {
+                signInWithPopup(auth, provider)
+                .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    // The signed-in user info.
+                    const user = result.user;
+                    localStorage.setItem('uid', user.uid)
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    // Handle Errors here.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // The email of the user's account used.
+                    const email = error.customData.email;
+                    // The AuthCredential type that was used.
+                    const credential = GoogleAuthProvider.credentialFromError(error);
+                    
+                    console.log(errorMessage)
+                });
+            })
+            
+            // localStorage.setItem('uid', user.uid)
         </script>
     </body>
 
