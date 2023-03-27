@@ -30,6 +30,13 @@
     <!-- ===============================================-->
     <link href="assets/css/theme.css" rel="stylesheet" />
 
+    <!-- new stylesheets-->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css"
+    crossorigin="anonymous">
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <link href="vendor/fontawesome/css/all.css" rel="stylesheet">
+    <link href="assets/css/login.css" rel="stylesheet">
+
     <!-- Vue 3 -->
     <script src='https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.js'></script>
     <!-- Vue 3: production version, optimized for size and speed -->
@@ -57,11 +64,13 @@
                   <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food" aria-label="Search" />
                 </div>
                 <div class="input-group-icon pe-2">
-                  <button class="btn btn-white shadow-warning text-warning" type="submit"> <i class="fas fa-user me-2"></i>Profile</button>
+                  <button class="btn btn-white shadow-warning text-warning" type="submit"><i class="fas fa-user me-2"></i>Profile</button>
                 </div>
-                <button class="btn btn-white shadow-warning text-warning" type="submit"> 
-                  <a id="logout" style="cursor: pointer;"><i class="fas fa-sign-out-alt"></i>Logout</a>
-                </button>
+                <div class="input-group-icon pe-2">
+                  <button class="btn btn-white shadow-warning text-warning" type="submit"> 
+                    <a id="logout" style="cursor: pointer;"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -71,7 +80,7 @@
             <div class="row flex-center">
               <div class="col-md-5 col-lg-6 order-0 order-md-1 mt-8 mt-md-0"><a class="img-landing-banner" href="#!"><img class="img-fluid" src="assets/img/gallery/hero-header.png" alt="hero-header" /></a></div>
               <div class="col-md-7 col-lg-6 py-8 text-md-start text-center">
-                <h1 class="display-1 fs-md-5 fs-lg-6 fs-xl-8 text-light">Are you starving?</h1>
+                <h1 class="display-1 fs-md-5 fs-lg-6 fs-xl-8 text-white">Are you starving?</h1>
                 <h1 class="text-800 mb-5 fs-4">Within a few clicks, find afforable mystery food boxes that<br class="d-none d-xxl-block" /> are accessible near you</h1>
                 <div class="card w-xxl-75">
                   <div class="card-body">
