@@ -8,6 +8,7 @@
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 <link href="vendor/fontawesome/css/all.css" rel="stylesheet">
 <link href="assets/css/login.css" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
 <title>Place Order</title>
 
 <style>
@@ -46,12 +47,25 @@
               <div id="content">
                 <div><img src="assets/img/gallery/mystery_image.jpg" width="100%" height="auto"/></div>
                 <div id="app">
-                  <h1 id="Name">Name:</h1><br>
-                  <h1 id="Restaurent">Restaurent:{{ Restaurent }}</h1><br>
-                  <h1 id="Location">Location: {{ Location }}</h1><br>
-                  <h1 id="CollectionTime">Collection Time: {{ CollectionTime }}</h1><br>
+                  <a id="Name">Name:</a><br>
+                  <a id="Restaurent">Restaurent:{{ Restaurent }}</a><br>
+                  <a id="Location">Location: {{ Location }}</a><br>
+                  <a id="CollectionTime">Collection Time: {{ CollectionTime }}</a><br>
                   <h1 class="text-center">Payment method</h1>
-                  <a id="PlaceOrder" href="payment" type="button" class="btn btn-primary my-4 " >Place Order</a>
+
+                  <div class="form">
+                    <label for="cardnum">Card Number</label>
+                    <div id="cardnum" aria-required=""></div>
+                    <label for="cardexp">Card Expiry: </label>
+                    <div id="cardexp"></div>
+                    <label for="cardcvc">Card CVC:</label>
+                    <div id="cardcvc"></div>
+                  </div>
+                  <div class="status"></div>
+                  <script src="script.js"></script>
+
+
+                  <button disabled id="PlaceOrder" class="btn btn-primary my-4 " >Place Order</button>
                 </div>
               </div>
             </div>
