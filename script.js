@@ -16,13 +16,13 @@ const mystyle={
 
 const elements = stripe.elements()
 
-const numElm = elements.create('cardNumber',{showIcon:true,iconStyle:'solid'})
+const numElm = elements.create('cardNumber',{showIcon:true,iconStyle:'solid', style:mystyle})
 numElm.mount(cardnum)
 
-const expElm = elements.create('cardExpiry',{disabled:true})
+const expElm = elements.create('cardExpiry',{disabled:true, style:mystyle})
 expElm.mount(cardexp)
 
-const cvcElm = elements.create('cardCvc',{disabled:true})
+const cvcElm = elements.create('cardCvc',{disabled:true, style:mystyle})
 cvcElm.mount(cardcvc)
 
 numElm.on('change',(e)=>{
@@ -45,7 +45,7 @@ cvcElm.on('change',(e)=>{
 })
 
 btn.addEventListener('click', ()=>{
-    fetch('./paymentIntent.php', {
+    fetch('paymentIntent.php', {
         method:'POST', 
         headers:{'Content-Type': 'application/json'},
         body:{}
