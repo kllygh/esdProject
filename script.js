@@ -34,3 +34,31 @@ cvcElm.on('change',(e)=>{
         btn.disabled = false
     }
 })
+
+btn.addEventListener('click', ()=>{
+    fetch('./paymentIntent.php', {
+        method:'POST', 
+        headers:{'Content-Type': 'application/json'},
+        body:{}
+    })
+    .then(res=>res.json())
+    .then(payload => {
+        stripe.confirmCardPayment(payload.client_secret, {
+            payment_method:{card:numElm}
+        }).then(transStat => {
+            if(transStat.error){
+                sts.innerHTML = `
+                <strong>Error:  </string> ${transStat.error.message}
+                `
+            }
+            else{
+                sts.innerHTML = `
+               <h3>${transStat.paymentIntent.description}</h3>
+               <strong>Transction Id: </strong>${transStat.paymentIntent.id}<br>
+               <strong>Amount deducted: </strong> ${transStat.paymentIntent.amount/100} ${transStat.paymentIntent.currency}
+                `
+            }
+            sts.style.display='block'
+        })
+    })
+})
