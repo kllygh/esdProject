@@ -5,6 +5,15 @@ const cardcvc = document.querySelector('#cardcvc')
 const btn = document.querySelector('#PlaceOrder')
 const sts = document.querySelector('.status')
 
+const mystyle={
+    base:{iconColor:'rgb(128, 128, 255)',
+    color:'rgb(128, 128, 255)',
+    fontFamily:'sans-serif',
+    '::placeholder': { color:'#757593'}
+    },
+    complete:{ color:'green'}
+}
+
 const elements = stripe.elements()
 
 const numElm = elements.create('cardNumber',{showIcon:true,iconStyle:'solid'})
