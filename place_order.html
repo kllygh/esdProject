@@ -216,7 +216,18 @@
       },
       methods: {
         submit() {
-          console.log("here");
+          fetch("./paymentIntent.php",{
+            method:"POST",
+            headers:{'Content-Type': 'application/json'},
+            body:{}
+          })
+          .then(res=>res.json())
+          .then(payload=>{
+            stripe.confirmCardPayment(payload.client_secret, {
+              payment_method:{card:numElm}
+              }).then(transStat=>console.log(transStat))
+          })
+          
         }
       }
     }).mount('#app')
