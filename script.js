@@ -19,30 +19,11 @@ const elements = stripe.elements()
 const numElm = elements.create('cardNumber',{showIcon:true,iconStyle:'solid', style:mystyle})
 numElm.mount(cardnum)
 
-const expElm = elements.create('cardExpiry',{disabled:true, style:mystyle})
+const expElm = elements.create('cardExpiry',{style:mystyle})
 expElm.mount(cardexp)
 
-const cvcElm = elements.create('cardCvc',{disabled:true, style:mystyle})
+const cvcElm = elements.create('cardCvc',{style:mystyle})
 cvcElm.mount(cardcvc)
-
-numElm.on('change',(e)=>{
-    if(e.complete){
-        expElm.update({disabled:false})
-        expElm.focus()
-    }
-})
-expElm.on('change',(e)=>{
-    if(e.complete){
-        cvcElm.update({disabled:false})
-        cvcElm.focus()
-    }
-
-})
-cvcElm.on('change',(e)=>{
-    if(e.complete){
-        btn.disabled = false
-    }
-})
 
 btn.addEventListener('click', ()=>{
     fetch('paymentIntent.php', {
