@@ -4,7 +4,7 @@ const stripe = Stripe(
 const cardnum = document.querySelector("#cardnum");
 const cardexp = document.querySelector("#cardexp");
 const cardcvc = document.querySelector("#cardcvc");
-// const form = document.querySelector("#my-form");
+const form = document.querySelector("#my-form");
 const sts = document.querySelector(".status");
 
 const mystyle = {
@@ -31,7 +31,6 @@ expElm.mount(cardexp);
 
 const cvcElm = elements.create("cardCvc", { style: mystyle });
 cvcElm.mount(cardcvc);
-
 // document.querySelector("#my-form").addEventListener("click", function () {
 //   console.log("good");
 //   // fetch('./paymentIntent.php', {

@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 import stripe
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -20,6 +20,9 @@ stripe_keys = {
 }
 stripe.api_key = stripe_keys["secret_key"]
 
+@app.route('/place_order')
+def place_order():
+    return render_template('place_orer.html')
 
 @app.route('/create-payment-intent', methods=["POST"])
 def create_payment_intent():

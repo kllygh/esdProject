@@ -111,16 +111,16 @@
               <a id="CollectionTime">Collection Time: {{ CollectionTime }}</a><br>
               <h1 class="text-center">Payment method</h1>
 
-              <div id="my-form" class="form">
+              <form id="my-form" class="form">
                 <label for="cardnum">Card Number</label>
                 <div id="cardnum"></div>
                 <label for="cardexp">Card Expiry: </label>
                 <div id="cardexp"></div>
                 <label for="cardcvc">Card CVC:</label>
                 <div id="cardcvc"></div>
-                <button @click="submit" id="place-order" class="btn btn-primary my-4">Place Order</button>
+                <button @click="submit" id="submit" class="btn btn-primary my-4">Place Order</button>
 
-              </div>
+              </form>
               <div class="status"></div>
 
 
@@ -216,17 +216,18 @@
       },
       methods: {
         submit() {
-          fetch("./paymentIntent.php",{
-            method:"POST",
-            headers:{'Content-Type': 'application/json'},
-            body:{}
-          })
-          .then(res=>res.json())
-          .then(payload=>{
-            stripe.confirmCardPayment(payload.client_secret, {
-              payment_method:{card:numElm}
-              }).then(transStat=>console.log(transStat))
-          })
+          //fetch("./paymentIntent.php",{
+            //method:"POST",
+            //headers:{'Content-Type': 'application/json'},
+            //body:{}
+          //})
+          //.then(res=>res.json())
+          //.then(payload=>{
+            //stripe.confirmCardPayment(payload.client_secret, {
+              //payment_method:{card:numElm}
+              //}).then(transStat=>console.log(transStat))
+          //})
+          
           
         }
       }
