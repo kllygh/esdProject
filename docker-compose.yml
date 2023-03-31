@@ -4,43 +4,8 @@ volumes:
   rabbitmq_data:
 
 services:
-  ###################################
-  # Order: The Order microservice
-  ###################################
-  order:
-    build:
-      context: ./
-      dockerfile: order.Dockerfile
-    image: jolenechew/order:esd
-    restart: always
-    environment:
-      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
-      PYTHONUNBUFFERED: 1
 
-  ###################################
-  # Mystery Box: The Mystery Box microservice
-  ###################################
-  box:
-    build:
-      context: ./
-      dockerfile: box.Dockerfile
-    image: jolenechew/box:esd
-    restart: always
-    environment:
-      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/box
-      PYTHONUNBUFFERED: 1
-
-  ###################################
-  # Payment: The Payment microservice
-  ###################################
-  payment:
-    build:
-      context: ./
-      dockerfile: payment.Dockerfile
-    image: jolenechew/payment:esd
-    restart: always
-    environment:
-      PYTHONUNBUFFERED: 1
+############################################ Messaging Communications #################################################
 
   ####################################
   # RabbitMQ: The messaging broker   
@@ -72,19 +37,6 @@ services:
       PYTHONUNBUFFERED: 1
 
   ######################################
-  # Notification: The Notification microservice
-  ######################################
-  notification:
-    build:
-      context: ./
-      dockerfile: notifications.Dockerfile
-    image: esdProj/notification:esd
-    restart: always
-    depends_on:
-      - rabbitmq
-    environment:
-
-  ######################################
   # Error: The Error microservice
   ######################################
   error:
@@ -100,6 +52,8 @@ services:
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
 
+############################################ Invocation based's Microservices (Simple MS) #################################################
+
   ##################################################
   # payment: The payment microservice
   ##################################################
@@ -112,7 +66,22 @@ services:
     environment:
       PYTHONUNBUFFERED: 1
 
-############################################ Invocation based's Microservices #################################################
+
+  ###############################################
+  # Notification: The Notification microservice
+  ###############################################
+  notification:
+    build:
+      context: ./
+      dockerfile: notification.Dockerfile
+    image: esdProj/notification:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
 
   ####################################
   # Box: The Mystery Box microservice
@@ -140,7 +109,6 @@ services:
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
-      restURL: http://localhost:5300/restaurant
     ports:
       - "5300:5300"
 
@@ -154,8 +122,38 @@ services:
     image: esdProj/location:esd
     restart: always
     environment:
-      locationURL: http://localhost:5200/location
       PYTHONUNBUFFERED: 1
+
+  ##################################################
+  # order: The order microservice
+  ##################################################
+  order:
+    build:
+      context: ./
+      dockerfile: order.Dockerfile
+    image: esdProj/order:esd
+    restart: always
+    environment:
+      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
+      PYTHONUNBUFFERED: 1
+
+  #################################################
+  # Refund: The Refund an Order microservice
+  #################################################
+  refund:
+    build:
+      context: ./
+      dockerfile: refund.Dockerfile
+    image: esdProj/order:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+############################################ Invocation based's Microservices (Complex MS) #################################################
 
   ###################################
   # Nearby: The Nearby microservice
@@ -170,26 +168,16 @@ services:
       - box
       - restaurant
       - activity_log
+      - rabbitmq
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      nearbyURL: http://localhost:5100/near_by
+      location_URL: "http://localhost:5200/location"
+      box_URL: "http://127.0.0.1:5000/box"
+      rest_URL: "http://localhost:5300/restaurant"
       PYTHONUNBUFFERED: 1
     ports:
-      - "5100:5100"
-
-  ##################################################
-  # order: The order microservice
-  ##################################################
-  order:
-    build:
-      context: ./
-      dockerfile: order.Dockerfile
-    image: esdProj/order:esd
-    restart: always
-    environment:
-      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
-      PYTHONUNBUFFERED: 1
+      - "5400:5400"
 
   ##################################################
   # Cancel an order: The cancel_order microservice
@@ -211,7 +199,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       order_URL: http://order:5001/order
-      box_URL: "http://localhost:6000/box"
+      box_URL: "http://127.0.0.1:5000/box"
       payment_URL: "http://localhost:6002/create-checkout-session"
       PYTHONUNBUFFERED: 1
     ports:
@@ -237,7 +225,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       order_URL: http://order:5001/order
-      box_URL: "http://localhost:6000/box"
+      box_URL: "http://127.0.0.1:5000/box"
       payment_URL: "http://localhost:6002/create-checkout-session"
       PYTHONUNBUFFERED: 1
     ports:
