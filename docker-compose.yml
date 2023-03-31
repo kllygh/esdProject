@@ -27,7 +27,7 @@ services:
     build:
       context: ./
       dockerfile: activity_log.Dockerfile
-    image: esdProj/activity_log:esd
+    image: esdproj/activity_log:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -43,7 +43,7 @@ services:
     build:
       context: ./
       dockerfile: error.Dockerfile
-    image: esdProj/error:esd
+    image: esdproj/error:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -61,7 +61,7 @@ services:
     build:
       context: ./
       dockerfile: payment.Dockerfile
-    image: esdProj/payment:esd
+    image: esdproj/payment:esd
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
@@ -74,7 +74,7 @@ services:
     build:
       context: ./
       dockerfile: notification.Dockerfile
-    image: esdProj/notification:esd
+    image: esdproj/notification:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -90,7 +90,7 @@ services:
     build:
       context: ./
       dockerfile: box.Dockerfile
-    image: esdProj/box:esd
+    image: esdproj/box:esd
     restart: always
     environment:
       dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/box
@@ -105,7 +105,7 @@ services:
     build:
         context: ./
         dockerfile: restaurant.Dockerfile
-    image: esdProj/restaurant:esd
+    image: esdproj/restaurant:esd
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
@@ -119,7 +119,7 @@ services:
     build:
         context: ./
         dockerfile: location.Dockerfile
-    image: esdProj/location:esd
+    image: esdproj/location:esd
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
@@ -129,9 +129,9 @@ services:
   ##################################################
   order:
     build:
-      context: ./
+      context: ./order
       dockerfile: order.Dockerfile
-    image: esdProj/order:esd
+    image: esdproj/order:esd
     restart: always
     environment:
       dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
@@ -144,7 +144,7 @@ services:
     build:
       context: ./
       dockerfile: refund.Dockerfile
-    image: esdProj/order:esd
+    image: esdproj/order:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -162,7 +162,7 @@ services:
     build:
         context: ./
         dockerfile: nearby.Dockerfile
-    image: esdProj/nearby:esd
+    image: esdproj/nearby:esd
     depends_on:
       - location
       - box
@@ -186,7 +186,7 @@ services:
     build:
         context: ./
         dockerfile: cancel_order.Dockerfile
-    image: esdProj/cancel_order:esd
+    image: esdproj/cancel_order:esd
     depends_on:
       - box
       - order
@@ -212,7 +212,7 @@ services:
     build:
       context: ./
       dockerfile: place_order.Dockerfile
-    image: esdProj/place_order:esd
+    image: esdproj/place_order:esd
     restart: always
     depends_on:
       - order
