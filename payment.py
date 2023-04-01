@@ -4,7 +4,7 @@ import stripe
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(name)
 CORS(app)
 
 load_dotenv()
@@ -21,14 +21,12 @@ stripe_keys = {
 stripe.api_key = stripe_keys["secret_key"]
 
 
-@app.route('/create-payment-intent', methods=["POST"])
+@app.route('/payment/create-payment-intent', methods=["POST"])
 def create_payment_intent():
     # get payment details
     data = request.get_json()
     amount = data["amount"]
     currency = data["currency"]
-    # token = data["token"]
-    # description = data["description"]
 
     try:
         intent = stripe.PaymentIntent.create(
@@ -38,10 +36,12 @@ def create_payment_intent():
         )
 
         # return client secret to Place an Order (to confirm payment)
-        return jsonify({"client_secret": intent.client_secret})
+        return jsonify({
+            'clientSecret': intent['client_secret'],
+        })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify(error=str(e)), 403
 
 
 @app.route("/confirm-payment", methods=["POST"])
@@ -66,6 +66,12 @@ def confirm_payment():
         return jsonify({"message": "Payment failed to create Payment Intent", "error": str(e)}), 400
 
 
-if __name__ == '__main__':
-    print("This is flask for " + os.path.basename(__file__) + ": manage orders ...")
+# @app.route('/secret')
+# def secret():
+#     intent =
+#     return jsonify(client_secret=intent.client_secret)
+
+
+if name == 'main':
+    print("This is flask for " + os.path.basename(file) + ": manage orders ...")
     app.run(host='0.0.0.0', port=6002, debug=True)
