@@ -106,6 +106,7 @@
                     <td>{{ order.collected }}</td>
                     <td>{{ order.bill }}</td>
                     <td>{{ order.status }}</td>
+                    <td><button {{ refundable }}>Refund</button></td>
                   </tr>
                   <tr>
                     <td>ABC</td>
@@ -216,16 +217,16 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <script>
-      const {
-        createApp
-      }=vue
-      createApp({
+      const past_order = Vue.createApp({
         data() {
           return {
-            past_order:[]
+            past_orders:[]
           }
         }
-      })
+      }).mount('#past_order')
+
+        
+      
     </script>
 
     <!-- ===============================================-->
