@@ -11,13 +11,13 @@ import pika
 
 app = Flask(__name__)
 
-# # load env variables
-# load_dotenv()
+# load env variables
+load_dotenv()
 
-# # get them
-# stripeSecretKey = os.environ.get("STRIPE_SECRET_KEY")
-# stripePublicKey = os.environ.get("STRIPE_PUBLISHABLE_KEY")
-# stripe.api_key = stripeSecretKey
+# get them
+stripeSecretKey = os.environ.get("STRIPE_SECRET_KEY")
+stripePublicKey = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+stripe.api_key = stripeSecretKey
 stripePublicKey = 'pk_test_51MmYEkAZMKLMwhgSfZEJ2itVnibnF9zIb9wJnZlLcTE90hQXj79tC4NivjjLU6Vf5KTiEsYMzDyz8lhg7GGebL8K007UA4ZmhZ'
 stripeSecretKey = 'sk_test_51MmYEkAZMKLMwhgSYhgnvpoB7BqKKNyORw03IaAtnyMJA5z3AFprqqBFJAwbv9SiN9lGtzYKhKk5M5qRU61Mlte000GF44rQT9'
 stripe.api_key = stripeSecretKey
@@ -63,7 +63,7 @@ def initiate_refund(chargeID, amt):
 
     amt = int(amt*100)
     refund = stripe.Refund.create(
-        charge = chargeID,
+        payment_intent = chargeID,
         amount = amt #amount refunded in cents, MUST BE INT NOT FLOAT
     )
     print('\n\n--------End Refund--------')
@@ -81,5 +81,3 @@ if __name__ == "__main__":  # execute this program only if it is run as a script
     print("\nThis is " + os.path.basename(__file__), end='')
     print(": monitoring routing key '{}' in exchange '{}' ...".format(monitorBindingKey, amqp_setup.exchangename))
     requestRefund()
-
-# initiate_refund('ch_3MoimcAZMKLMwhgS0N06WMXD', 1)
