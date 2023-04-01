@@ -21,7 +21,7 @@ CORS(app)
 order_URL = environ.get('order_URL') or "http://localhost:5001/order"
 box_URL = environ.get('box_URL') or "http://localhost:6000/box"
 payment_URL = environ.get(
-    "payment_URL") or "http://localhost:6002/create-payment-intent"
+    "payment_URL") or "http://localhost:6002/payment"
 
 
 @app.route("/place_order", methods=['POST'])
@@ -61,8 +61,6 @@ def processPlaceOrder(order):
     # 2. Send the order info
 
     # NOTE: Order sent from UI must contain customer_number, customer_id, restaurant_id, boxID, quantity, total_bill (calculated), transaction_no, payment_method, currency
-
-    # ASK: from the UI, the user will send the info above rite
 
     # Get order info
     boxID = int(order["boxID"])
@@ -138,26 +136,26 @@ def processPlaceOrder(order):
         "currency": currency
     }
     # NOTE
-    payment_result = invoke_http(payment_URL, method="POST", json=payment)
-    print("payment_result:", payment_result)
+    intent_URL = payment_URL + "/create-payment-intent"
+    intent_result = invoke_http(intent_URL, method="POST", json=payment)
+    print("payment_result:", intent_result)
 
+    client_secret = intent_result["clientSecret"]
     # client_secret = payment_result.json()["client_secret"]
 
-    # Confirm payment:
-
-    code_payment = payment_result["code"]
-    message_payment = json.dumps(payment_result)
-    rabbit_msg = payment_result["message"]
+    code_payment = intent_result["code"]
+    message_payment = json.dumps(intent_result)
+    rabbit_msg = intent_result["message"]
 
     if code_payment not in range(200, 300):
-        return publish_error(message_payment, payment_result,
+        return publish_error(message_payment, intent_result,
                              code_payment, rabbit_msg)
     else:
         publish_activity(message_payment, rabbit_msg)
 
     print("\nPayment activity sent to RabbitMQ Exchange Activity Log")
 
-    charge_id = retrieve_chargeID(payment_result)
+    charge_id = retrieve_chargeID(intent_result)
 
     updated_order = update_order(charge_id, order_id, "PAID")
     message_updated = json.dumps(updated_order)

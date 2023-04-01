@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accept a payment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <meta name="description" content="A demo of a payment on Stripe" />
+    <link rel="stylesheet" href="checkout.css" />
+    <script src="https://js.stripe.com/v3/" sandbox>
+    </script>
+    <script src="checkout.js" defer></script>
+</head>
+
+<body>
+
+    <form id="payment-form">
+        <div id="payment-element">
+            <!-- Elements will create form elements here -->
+        </div>
+        <button id="submit">
+            <div class="spinner hidden" id="spinner"></div>
+            <span id="button-text">Place Order</span>
+        </button>
+        <div id="payment-message" class="hidden">
+            <!-- Display error message to your customers here -->
+
+        </div>
+    </form>
+
+    <script>
+        const stripe = Stripe(
+            "pk_test_51Mmaq9Kcs6la72jh1ZMbbP5wP4yd0wbYZ43d1aDu09CDagPhLEet12Mcho1Nm2gApRmaPt8CCHrrFpWNsKb3h6De00PYaYjnbP"
+        );
+
+        const place_order_URL = "http://localhost:5100/place_order";
+        const payment_URL = "http://localhost:6002/payment"
+
+
+        // HERE CREATE PAYMENT ELEMENT 
+        const options = {
+            mode: 'payment',
+            amount: 1099, // this one needs to be generated dynamically from UI NOTE
+            currency: 'sgd',
+            appearance: {
+                theme: "stripe",
+            },
+        };
+
+        // Set up Stripe.js and Elements to use in checkout form
+        const elements = stripe.elements(options);
+
+        // HERE Create and mount the Payment Element
+        const paymentElement = elements.create('payment', {
+            layout: {
+                type: 'accordion',
+                defaultCollapsed: false,
+                radios: true,
+                spacedAccordionItems: false
+            }
+        });
+        paymentElement.mount('#payment-element');
+
+        // // CALLED ON LOAD
+        // createIntent();
+
+        // // CREATE PAYMENT INTENT -------------------------------------
+        // let intentId;
+
+        // // NOTE: We will create Intent on load -> connecting to payment.py
+        // async function createIntent() {
+        //     const response = await fetch(`${payment_URL}/create-payment-intent`, {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(payment)
+        //     })
+
+        //     // obtain client secret -> to confirm payment
+        //     const {
+        //         clientSecret,
+        //         payment_intent_id
+        //     } = await response.json();
+
+        //     intentId = payment_intent_id;
+        //     // get payment intent id as global to retrieve the client secret to confirm payment later
+        // }
+
+        // NOTE: Create payment Intent will be done by place order
+
+        document.querySelector("#payment-form").addEventListener("submit", placeOrder)
+
+        async function placeOrder(e) {
+            e.preventDefault();
+            setLoading(true);
+
+            await fetch(place_order_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "boxID": 1782487,
+                        "quantity": 1,
+                        "customer_number": 90219932,
+                        "customer_id": 12,
+                        "restaurant_id": 12,
+                        "total_bill": 18.50,
+                        "transaction_no": 1000,
+                        "currency": "sgd"
+
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    result = data.data;
+                    console.log(result);
+
+                    if (data.code == 201) {
+                        handleSubmit();
+                    }
+
+                    // 3 cases
+                    // switch (data.code) {
+                    //     case 201:
+                    //         // 201
+                    //         this.orderSuccessful = true;
+                    //         orderMessage =
+                    //             `Order placed
+                    //                     Order Result:
+                    //                     ${result.order_result.code}:${result.order_result.data.status}
+
+                    //                     Shipping Result:
+                    //                     ${result.shipping_result.code}:${result.shipping_result.message}`;
+                    //         break;
+
+                    //     case 400:
+                    //         // 400 
+                    //         this.orderSuccessful = true;
+                    //         orderMessage =
+                    //             `Order placed
+                    //                     Order Result:
+                    //                     ${result.order_result.code}:${result.order_result.data.status}
+
+                    //                     Shipping Result:
+                    //                     ${result.shipping_result.code}:${result.shipping_result.message}
+
+                    //                     Error handling:
+                    //                     ${data.message}`;
+                    //         break;
+                    //     case 500:
+                    //         // 500 
+                    //         orderMessage =
+                    //             `Order placed with error:
+                    //                     Order Result:
+                    //                     ${result.order_result.code}:${result.order_result.message}
+
+                    //                     Error handling:
+                    //                     ${data.message}`;
+                    //         break;
+                    //     default:
+                    //         orderMessage = `Unexpected error: ${data.code}`;
+                    //         console.log(`Unknown error code : ${data.code}`);
+                    //         break;
+
+                    // } // switch
+                    // console.log(orderMessage);
+                    // this.orderPlaced = true;
+                })
+                .catch(error => {
+                    console.log("Problem in placing an order. " + error);
+                })
+
+        }
+
+        // NOTE: TEST DATA
+        payment = {
+            "boxID": 123,
+            "amount": 1200,
+            "currency": "sgd"
+        }
+
+        async function handleSubmit() {
+
+            payment_intent = stripe.PaymentIntent.retrieve(intentId)
+
+            client_secret = payment_intent.client_secret
+            const {
+                error
+            } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    // Make sure to change this to your payment completion page
+                    return_url: "http://localhost:4242/checkout.html",
+                    receipt_email: emailAddress,
+                },
+            });
+        }
+
+
+        form.addEventListener('submit', async (event) => {
+            // We don't want to let default form submission happen here,
+            // which would refresh the page.
+            event.preventDefault();
+
+            // Trigger form validation and wallet collection
+            const {
+                error: submitError
+            } = await elements.submit();
+            if (submitError) {
+                handleError(submitError);
+                return;
+            }
+
+            if (error.type === "card_error" || error.type === "validation_error") {
+                showMessage(error.message);
+            } else {
+                showMessage("An unexpected error occurred.");
+            }
+
+            setLoading(false);
+
+            // Create the PaymentIntent and obtain clientSecret
+
+
+            // Confirm the PaymentIntent using the details collected by the Payment Element
+            const {
+                error
+            } = await stripe.confirmPayment({
+                elements,
+                clientSecret,
+                confirmParams: {
+                    return_url: 'https://example.com/order/123/complete',
+                },
+            });
+
+            if (error) {
+                // This point is only reached if there's an immediate error when
+                // confirming the payment. Show the error to your customer (for example, payment details incomplete)
+                handleError(error);
+            } else {
+                // Your customer is redirected to your `return_url`. For some payment
+                // methods like iDEAL, your customer is redirected to an intermediate
+                // site first to authorize the payment, then redirected to the `return_url`.
+            }
+        });
+
+        // Show a spinner on payment submission
+        function setLoading(isLoading) {
+            if (isLoading) {
+                // Disable the button and show a spinner
+                document.querySelector("#submit").disabled = true;
+                document.querySelector("#spinner").classList.remove("hidden");
+                document.querySelector("#button-text").classList.add("hidden");
+            } else {
+                document.querySelector("#submit").disabled = false;
+                document.querySelector("#spinner").classList.add("hidden");
+                document.querySelector("#button-text").classList.remove("hidden");
+            }
+        }
+
+        function showMessage(messageText) {
+            const messageContainer = document.querySelector("#payment-message");
+
+            messageContainer.classList.remove("hidden");
+            messageContainer.textContent = messageText;
+
+            setTimeout(function () {
+                messageContainer.classList.add("hidden");
+                messageText.textContent = "";
+            }, 4000);
+        }
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous">
+    </script>
+
+
+</body>
+
+</html>
