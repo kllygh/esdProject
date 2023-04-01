@@ -26,6 +26,14 @@ def processOrderLog(order):
     print("Recording an order log:")
     print(order)
 
+    #Cancel order: error return
+    # return {
+    #         "code": 500,
+    #         "data": {"cancel_order_result": box, "status": "Failed"},
+    #         "message": "Unable to update inventory."
+    #     }
+
+    
 
 if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
