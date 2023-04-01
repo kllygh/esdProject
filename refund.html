@@ -34,11 +34,17 @@
     #refund {
         margin: 47%;
     }
+    table, th,td {
+      border: 1px solid black;
+    }
+    table {
+      width: 100%;
+    }
 </style>
 
 </head>
 
-<body onload="checkLogin()" class="bg-default">
+<!-- <body onload="checkLogin()" class="bg-default"> -->
 
 <!-------------------------------------------------------------- NAVBAR ---------------------------------------------------->
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" data-navbar-on-scroll="data-navbar-on-scroll">
@@ -83,18 +89,67 @@
             <div class="card bg-secondary shadow border-0">
               <div class="card-header bg-transparent pb-5">
                 <div class="text-muted text-center mt-2 mb-3"><small>Making a refund for your order</small></div>
-                <div id="content">
-                    <h1 id="Restaurant">Restaurant: {{ Restaurant }}</h1><br>
-                    <h1 id="Quantity">Quantity: {{ Quantity }}</h1><br>
-                    <h1 id="totalPrice">Total Price: {{ TotalPrice }}</h1><br>
-                    <h1 id="PaymentMethod">Payment method: {{PaymentMethod }}</h1><br>
-                </div>
+                <table id="past_order">
+                  <tr>
+                    <th>Post Name</th>
+                    <th>Quantity</th>
+                    <th>Date ordered</th>
+                    <th>Time collected</th>
+                    <th>Total bill</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                  <tr v-for="order in past_orders">
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.date }}</td>
+                    <td>{{ order.collected }}</td>
+                    <td>{{ order.bill }}</td>
+                    <td>{{ order.status }}</td>
+                    <td><button {{ refundable }}>Refund</button></td>
+                  </tr>
+                  <tr>
+                    <td>ABC</td>
+                    <td>2</td>
+                    <td>31/3/23</td>
+                    <td>21:45</td>
+                    <td>8.00</td>
+                    <td>Collected</td>
+                    <td><button>Refund</button></td>
+                  </tr>
+                  <tr>
+                    <td>DEF</td>
+                    <td>1</td>
+                    <td>31/3/23</td>
+                    <td>-</td>
+                    <td>5.00</td>
+                    <td>New</td>
+                    <td><button>Refund</button></td>
+                  </tr>
+                  <tr>
+                    <td>GHI</td>
+                    <td>1</td>
+                    <td>28/3/23</td>
+                    <td>21:30</td>
+                    <td>4.00</td>
+                    <td>Collected</td>
+                    <td><button disabled>Refund</button></td>
+                  </tr>
+                  <tr>
+                    <td>JKL</td>
+                    <td>1</td>
+                    <td>23/3/23</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>Refuned</td>
+                    <td><button disabled>Refund</button></td>
+                  </tr>
+                </table>
 
-                <a id="refund" href="refund" type="button" class="btn btn-primary my-4 " >Refund</a>
     </div>
 
     <!---------------------------------------- FIREBASE -------------------------------------------->
-    <script>
+    <!-- <script>
       function checkLogin() {
         if (localStorage.getItem('uid') == null) {
           window.location.href = 'login.html';
@@ -102,7 +157,7 @@
       }
       console.log(localStorage.getItem('uid')) 
       // constant for account login
-    </script>
+    </script> -->
 
 
     <!---------------------------------------- FIREBASE FOR LOGOUT -------------------------------------------->
@@ -160,19 +215,18 @@
     <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script>
-      const { createApp } = Vue
 
-      createApp({
+    <script>
+      const past_order = Vue.createApp({
         data() {
-            return {
-                Restaurent: "",
-                Quantity: "",
-                TotalPrice: "",
-                PaymentMethod:""
-           }
+          return {
+            past_orders:[]
+          }
         }
-      }).mount('#app')
+      }).mount('#past_order')
+
+        
+      
     </script>
 
     <!-- ===============================================-->

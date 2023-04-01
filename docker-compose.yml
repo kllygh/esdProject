@@ -2,45 +2,16 @@ version: "3.8"
 
 volumes:
   rabbitmq_data:
+  pgdata:
+  kongadata:
+
+networks:
+  kong-net:
+  driver: 
 
 services:
-  ###################################
-  # Order: The Order microservice
-  ###################################
-  order:
-    build:
-      context: ./
-      dockerfile: order.Dockerfile
-    image: jolenechew/order:esd
-    restart: always
-    environment:
-      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
-      PYTHONUNBUFFERED: 1
 
-  ###################################
-  # Mystery Box: The Mystery Box microservice
-  ###################################
-  box:
-    build:
-      context: ./
-      dockerfile: box.Dockerfile
-    image: jolenechew/box:esd
-    restart: always
-    environment:
-      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/box
-      PYTHONUNBUFFERED: 1
-
-  ###################################
-  # Payment: The Payment microservice
-  ###################################
-  payment:
-    build:
-      context: ./
-      dockerfile: payment.Dockerfile
-    image: jolenechew/payment:esd
-    restart: always
-    environment:
-      PYTHONUNBUFFERED: 1
+############################################ Messaging Communications #################################################
 
   ####################################
   # RabbitMQ: The messaging broker   
@@ -62,7 +33,7 @@ services:
     build:
       context: ./
       dockerfile: activity_log.Dockerfile
-    image: esdProj/activity_log:esd
+    image: esdproj/activity_log:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -70,19 +41,6 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-
-  ######################################
-  # Notification: The Notification microservice
-  ######################################
-  notification:
-    build:
-      context: ./
-      dockerfile: notifications.Dockerfile
-    image: esdProj/notification:esd
-    restart: always
-    depends_on:
-      - rabbitmq
-    environment:
 
   ######################################
   # Error: The Error microservice
@@ -91,7 +49,7 @@ services:
     build:
       context: ./
       dockerfile: error.Dockerfile
-    image: esdProj/error:esd
+    image: esdproj/error:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -100,6 +58,8 @@ services:
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
 
+############################################ Invocation based's Microservices (Simple MS) #################################################
+
   ##################################################
   # payment: The payment microservice
   ##################################################
@@ -107,12 +67,27 @@ services:
     build:
       context: ./
       dockerfile: payment.Dockerfile
-    image: esdProj/payment:esd
+    image: esdproj/payment:esd
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
 
-############################################ Invocation based's Microservices #################################################
+
+  ###############################################
+  # Notification: The Notification microservice
+  ###############################################
+  notification:
+    build:
+      context: ./
+      dockerfile: notification.Dockerfile
+    image: esdproj/notification:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
 
   ####################################
   # Box: The Mystery Box microservice
@@ -121,7 +96,7 @@ services:
     build:
       context: ./
       dockerfile: box.Dockerfile
-    image: esdProj/box:esd
+    image: esdproj/box:esd
     restart: always
     environment:
       dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/box
@@ -136,11 +111,10 @@ services:
     build:
         context: ./
         dockerfile: restaurant.Dockerfile
-    image: esdProj/restaurant:esd
+    image: esdproj/restaurant:esd
     restart: always
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
-      restURL: http://localhost:5300/restaurant
     ports:
       - "5300:5300"
 
@@ -151,11 +125,41 @@ services:
     build:
         context: ./
         dockerfile: location.Dockerfile
-    image: esdProj/location:esd
+    image: esdproj/location:esd
     restart: always
     environment:
-      locationURL: http://localhost:5200/location
       PYTHONUNBUFFERED: 1
+
+  ##################################################
+  # order: The order microservice
+  ##################################################
+  order:
+    build:
+      context: ./order
+      dockerfile: order.Dockerfile
+    image: esdproj/order:esd
+    restart: always
+    environment:
+      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
+      PYTHONUNBUFFERED: 1
+
+  #################################################
+  # Refund: The Refund an Order microservice
+  #################################################
+  refund:
+    build:
+      context: ./
+      dockerfile: refund.Dockerfile
+    image: esdproj/order:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+############################################ Invocation based's Microservices (Complex MS) #################################################
 
   ###################################
   # Nearby: The Nearby microservice
@@ -164,32 +168,22 @@ services:
     build:
         context: ./
         dockerfile: nearby.Dockerfile
-    image: esdProj/nearby:esd
+    image: esdproj/nearby:esd
     depends_on:
       - location
       - box
       - restaurant
       - activity_log
+      - rabbitmq
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      nearbyURL: http://localhost:5100/near_by
+      location_URL: "http://localhost:5200/location"
+      box_URL: "http://127.0.0.1:5000/box"
+      rest_URL: "http://localhost:5300/restaurant"
       PYTHONUNBUFFERED: 1
     ports:
-      - "5100:5100"
-
-  ##################################################
-  # order: The order microservice
-  ##################################################
-  order:
-    build:
-      context: ./
-      dockerfile: order.Dockerfile
-    image: esdProj/order:esd
-    restart: always
-    environment:
-      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
-      PYTHONUNBUFFERED: 1
+      - "5400:5400"
 
   ##################################################
   # Cancel an order: The cancel_order microservice
@@ -198,7 +192,7 @@ services:
     build:
         context: ./
         dockerfile: cancel_order.Dockerfile
-    image: esdProj/cancel_order:esd
+    image: esdproj/cancel_order:esd
     depends_on:
       - box
       - order
@@ -211,7 +205,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       order_URL: http://order:5001/order
-      box_URL: "http://localhost:6000/box"
+      box_URL: "http://127.0.0.1:5000/box"
       payment_URL: "http://localhost:6002/create-checkout-session"
       PYTHONUNBUFFERED: 1
     ports:
@@ -224,7 +218,7 @@ services:
     build:
       context: ./
       dockerfile: place_order.Dockerfile
-    image: esdProj/place_order:esd
+    image: esdproj/place_order:esd
     restart: always
     depends_on:
       - order
@@ -237,8 +231,88 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       order_URL: http://order:5001/order
-      box_URL: "http://localhost:6000/box"
+      box_URL: "http://127.0.0.1:5000/box"
       payment_URL: "http://localhost:6002/create-checkout-session"
       PYTHONUNBUFFERED: 1
     ports:
       - "5100:5100"
+
+   #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:9.6
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong:2.0.4
+    command: "kong migrations bootstrap"
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong:2.0.4
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    depends_on:
+      - kong-migration
+    ports:
+      - "8000:8000"
+  
+  #######################################
+  # Konga: Kong GUI
+  #######################################
+  konga:
+    image: pantsel/konga
+    restart: always
+    networks:
+        - kong-net
+    environment:
+      DB_ADAPTER: postgres
+      DB_HOST: kong-database
+      DB_USER: kong
+      DB_PASSWORD: password
+      DB_DATABASE: konga_db
+    depends_on:
+      - kong
+    ports:
+      - "1337:1337"
+    volumes:
+      - kongadata:/app/kongadata

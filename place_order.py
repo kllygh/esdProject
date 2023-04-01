@@ -19,7 +19,7 @@ CORS(app)
 
 
 order_URL = environ.get('order_URL') or "http://localhost:5001/order"
-box_URL = environ.get('box_URL') or "http://localhost:6000/box"
+box_URL = environ.get('box_URL') or "http://localhost:5000/box"
 payment_URL = environ.get(
     "payment_URL") or "http://localhost:6002/payment"
 

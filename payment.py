@@ -21,12 +21,14 @@ stripe_keys = {
 stripe.api_key = stripe_keys["secret_key"]
 
 
-@app.route('/payment/create-payment-intent', methods=["POST"])
+@app.route('/create-payment-intent', methods=["POST"])
 def create_payment_intent():
     # get payment details
     data = request.get_json()
     amount = data["amount"]
     currency = data["currency"]
+    # token = data["token"]
+    # description = data["description"]
 
     try:
         intent = stripe.PaymentIntent.create(
@@ -36,12 +38,10 @@ def create_payment_intent():
         )
 
         # return client secret to Place an Order (to confirm payment)
-        return jsonify({
-            'clientSecret': intent['client_secret'],
-        })
+        return jsonify({"client_secret": intent.client_secret})
 
     except Exception as e:
-        return jsonify(error=str(e)), 403
+        return jsonify({"error": str(e)}), 400
 
 
 @app.route("/confirm-payment", methods=["POST"])
@@ -64,12 +64,6 @@ def confirm_payment():
 
     except Exception as e:
         return jsonify({"message": "Payment failed to create Payment Intent", "error": str(e)}), 400
-
-
-# @app.route('/secret')
-# def secret():
-#     intent =
-#     return jsonify(client_secret=intent.client_secret)
 
 
 if __name__ == '__main__':
