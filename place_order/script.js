@@ -50,7 +50,7 @@ async function handleSubmit(e){
   const { error } = await stripe.confirmPayment({
     elements,
     confirmParams: {
-      return_url: "http://localhost:4343/place_order.html",
+      return_url: "http://localhost:4242/place_order.html",
     },
   });
 
