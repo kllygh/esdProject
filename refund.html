@@ -92,12 +92,20 @@
                 <table id="past_order">
                   <tr>
                     <th>Post Name</th>
-                    <th>Quantify</th>
+                    <th>Quantity</th>
                     <th>Date ordered</th>
                     <th>Time collected</th>
                     <th>Total bill</th>
                     <th>Status</th>
                     <th></th>
+                  </tr>
+                  <tr v-for="order in past_orders">
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.date }}</td>
+                    <td>{{ order.collected }}</td>
+                    <td>{{ order.bill }}</td>
+                    <td>{{ order.status }}</td>
                   </tr>
                   <tr>
                     <td>ABC</td>
@@ -206,6 +214,19 @@
     <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+      const {
+        createApp
+      }=vue
+      createApp({
+        data() {
+          return {
+            past_order:[]
+          }
+        }
+      })
+    </script>
 
     <!-- ===============================================-->
     <!--    JavaScripts-->
