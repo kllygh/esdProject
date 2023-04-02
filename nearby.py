@@ -49,7 +49,7 @@ def near_by():
             
             code = result["code"]
             print("--------------status code: ", code)
-            message = json.dumps(result)
+            message = result['message']
 
             ######################## Send to AMQP ##########################################
             if code not in range(200, 300):
@@ -58,13 +58,13 @@ def near_by():
                 return {
                     "code": 500,
                     "data": result,
-                    "message": "Nearby Microservice failure sent for error handling."
+                    "message": message
                 }
             routing_key = 'retrieveDetails.info'
             updateActivityandError(code, message, result, routing_key)
             ####################### End of AMQP ##########################################
 
-            return jsonify(message), result["code"]
+            return jsonify(result), result["code"]
 
         except Exception as e:
             # Unexpected error in code
