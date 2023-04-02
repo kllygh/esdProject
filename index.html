@@ -173,7 +173,9 @@
                               </div>
                             </div>
                             <div class="d-grid gap-2">
-                              <a href="placeorder.html?value={{box.boxID }}"  class="btn btn-lg btn-danger" >Order now</a>
+                              <button @click="placeOrder(box)" type="button"
+                                    class="btn btn-primary">Place
+                                    Order</button>
                             </div>
                           </div>
                   </div>         
