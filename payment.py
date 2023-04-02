@@ -4,7 +4,7 @@ import stripe
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-app = Flask(name)
+app = Flask(__name__)
 CORS(app)
 
 load_dotenv()
@@ -29,49 +29,55 @@ def create_payment_intent():
     currency = data["currency"]
 
     try:
+
         intent = stripe.PaymentIntent.create(
             amount=amount,
             currency=currency,
             automatic_payment_methods={"enabled": True}
         )
 
+        # retrieve the Payment Intent ID from the response
+        payment_intent_id = intent['id']
+
+        # stripe.PaymentIntent.confirm(
+        #     payment_intent_id
+        # )
+
         # return client secret to Place an Order (to confirm payment)
         return jsonify({
-            'clientSecret': intent['client_secret'],
+            "clientSecret": intent['client_secret'],
+            "paymentIntentId": payment_intent_id,
+            "code": 201,
+            "message": "Payment intent sucessfully created",
+
         })
 
     except Exception as e:
         return jsonify(error=str(e)), 403
 
 
-@app.route("/confirm-payment", methods=["POST"])
-def confirm_payment():
-    data = request.get_json()
+# @app.route("/confirm-payment", methods=["POST"])
+# def confirm_payment():
+#     data = request.get_json()
 
-    try:
-        # Retrieve payment intent
-        intent = stripe.PaymentIntent.retrieve(data["payment_intent_id"])
+#     try:
+#         # Retrieve payment intent
+#         intent = stripe.PaymentIntent.retrieve(data["payment_intent_id"])
 
-        # confirm payment intent with the provided payment method and payment details
-        # NOTE If payment fails, the PaymentIntent will transition to the requires_payment_method status. If payment succeeds, the PaymentIntent will transition to the succeeded status
+#         # confirm payment intent with the provided payment method and payment details
+#         # NOTE If payment fails, the PaymentIntent will transition to the requires_payment_method status. If payment succeeds, the PaymentIntent will transition to the succeeded status
 
-        # NOTE TO UI PEOPLE:  payment_method_id is expected to be included in the POST request data that is sent to the Flask route, either in an HTML form input field or in a JSON payload.
-        intent.confirm(
-            payment_method=data["payment_method_id"], metadata=data["metadata"])
+#         # NOTE TO UI PEOPLE:  payment_method_id is expected to be included in the POST request data that is sent to the Flask route, either in an HTML form input field or in a JSON payload.
+#         intent.confirm(
+#             payment_method=data["payment_method_id"], metadata=data["metadata"])
 
-        # return success response to Place an Order
-        return jsonify({"message": "Payment Intent success", "code": 201, }, 201)
+#         # return success response to Place an Order
+#         return jsonify({"message": "Payment Intent success", "code": 201, }, 201)
 
-    except Exception as e:
-        return jsonify({"message": "Payment failed to create Payment Intent", "error": str(e)}), 400
-
-
-# @app.route('/secret')
-# def secret():
-#     intent =
-#     return jsonify(client_secret=intent.client_secret)
+#     except Exception as e:
+#         return jsonify({"message": "Payment failed to create Payment Intent", "error": str(e)}), 400
 
 
-if name == 'main':
-    print("This is flask for " + os.path.basename(file) + ": manage orders ...")
+if __name__ == '__main__':
+    print("This is flask for " + os.path.basename(__file__) + ": payment ...")
     app.run(host='0.0.0.0', port=6002, debug=True)

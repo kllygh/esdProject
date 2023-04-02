@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS `orders`;
 CREATE TABLE IF NOT EXISTS `orders` (
   `order_id` int NOT NULL AUTO_INCREMENT,
   `customer_number` int NOT NULL,
-  `customer_id` int NOT NULL,
+  `customer_id` varchar(50) NOT NULL,
   `restaurant_id` int NOT NULL,
   `boxID` int NOT NULL,
   `charge_id` varchar(50) NOT NULL,
@@ -51,10 +51,10 @@ CREATE TABLE IF NOT EXISTS `orders` (
 --
 
 INSERT INTO `orders` (`order_id`,`customer_number`, `customer_id`, `restaurant_id`, `boxID`, `charge_id`, `refund_id`, `quantity`, `total_bill`, `transaction_no`, `payment_method`, `currency`, `status`, `created`, `modified`) VALUES
-(1, 90219935, 100, 02020202 , 123456789, '908', 'NULL', 3, 9.00, 908070605, 'Credit Card', 'SGD', 'NEW', '2020-06-12 02:14:55', '2020-06-12 02:14:55');
+(1, 90219935, 'abc100', 02020202 , 123456789, '908', 'NULL', 3, 9.00, 908070605, 'Credit Card', 'SGD', 'NEW', '2020-06-12 02:14:55', '2020-06-12 02:14:55');
 
 INSERT INTO `orders` (`order_id`, `customer_number`, `customer_id`, `restaurant_id`, `boxID`, `charge_id`, `refund_id`, `quantity`, `total_bill`, `transaction_no`, `payment_method`, `currency`, `status`, `created`, `modified`) VALUES
-(2, 90219935, 100, 02020202 , 123456789, '908', 'NULL', 3, 9.00, 908070605, 'Credit Card', 'SGD', 'NEW', '2020-06-12 02:14:55', '2020-06-12 02:14:55');
+(2, 90219935, 'abc100', 02020202 , 123456789, '908', 'NULL', 3, 9.00, 908070605, 'Credit Card', 'SGD', 'NEW', '2020-06-12 02:14:55', '2020-06-12 02:14:55');
 COMMIT;
 
 

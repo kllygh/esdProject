@@ -58,42 +58,61 @@ def place_order():
 
 
 def processPlaceOrder(order):
-    # 2. Send the order info
 
-    # NOTE: Order sent from UI must contain customer_number, customer_id, restaurant_id, boxID, quantity, total_bill (calculated), transaction_no, payment_method, currency
+    # NOTE: Order sent from UI must contain customer_number, customer_id, restaurant_name, boxID, quantity, total_bill (calculated), payment_method, currency
+
+    print('\n------START HERE-----')
 
     # Get order info
     boxID = int(order["boxID"])
     quantity = int(order["quantity"])
     customer_number = int(order["customer_number"])
-    customer_id = int(order["customer_id"])
-    restaurant_id = int(order["restaurant_id"])
+    customer_id = order["customer_id"]
+    restaurant_name = order["restaurant_name"]
     total_bill = order["total_bill"]  # not sure
+    restaurant_id = order["restaurant_id"]
 
     # ASK not sure if needed: how to get payment method
     # payment_method = order["payment_method"] or None
-    transaction_no = order["transaction_no"] or None
-    currency = order["currency"] or None
+    currency = order["currency"]
+    collection_time = order["collection_time"]
+    location = order["location"]
+
+    place_order = {
+        "boxID": boxID,
+        "quantity": quantity,
+        "customer_number": customer_number,
+        "customer_id": customer_id,
+        "total_bill": total_bill,
+        "restaurant_id": restaurant_id,
+        "currency": currency,
+        "payment_method": "card"
+    }
 
     # Set unit amount, which is in cents
     cents = int(total_bill * 100)
 
-    print(boxID, quantity, customer_number, customer_id, restaurant_id,
-          total_bill, transaction_no, currency)
+    print(boxID, quantity, customer_number, customer_id, restaurant_name,
+          total_bill, currency)
 
-    # 3. Check if sufficient inventory
+    # 1. Check if sufficient inventory
 
     print('\n------Invoking box microservice-----')
-    inv_URL = f"{box_URL}/inventory/{boxID}/{quantity}"
+    inv_URL = f"{box_URL}/{boxID}"
     inventory_result = invoke_http(inv_URL, method="GET")
     print("inventory_result:", inventory_result, '\n')
 
-    curr_inventory = inventory_result["data"]["inventory"]
+    curr_inventory = inventory_result["data"]["quantity"]
 
-    # 4. if insufficient inventory, send to error
+    # 2. if insufficient inventory, send to error
     code_inventory = inventory_result["code"]
     message_inventory = json.dumps(inventory_result)
     rabbit_msg = inventory_result["message"]
+
+    if curr_inventory < quantity:
+        rabbit_msg = "There is not enough inventory"
+        return publish_error(message_inventory, inventory_result,
+                             code_inventory, rabbit_msg)
 
     amqp_setup.check_setup()
 
@@ -108,10 +127,10 @@ def processPlaceOrder(order):
 
     print("\nInventory sufficient activity published to RabbitMQ Exchange.\n")
 
-    # 4. Since sufficient inventory, send to Order to record
+    # 3. Since sufficient inventory, send to Order to record
     print('\n------Invoking Order microservice-------')
     new_order_URL = f"{order_URL}/new"
-    order_result = invoke_http(new_order_URL, method="POST", json=order)
+    order_result = invoke_http(new_order_URL, method="POST", json=place_order)
     print("order_result:", order_result)
 
     code_order = order_result["code"]
@@ -126,7 +145,13 @@ def processPlaceOrder(order):
 
     print("\nOrder activity sent to RabbitMQ Exchange Activity Log")
 
-    # 5. Conduct Payment
+    print("\n------Notify customer on Order Confirmation-------")
+    msg = json.dumps({
+        "notif_details": [customer_number, customer_id, order_id, collection_time, location, total_bill, ]
+    })
+    notify(msg)
+
+    # 4. Conduct Payment
     print("\n------Invoking Payment microservice-------")
 
     # NOTE: Create payment info object to send to Payment
@@ -146,6 +171,7 @@ def processPlaceOrder(order):
     code_payment = intent_result["code"]
     message_payment = json.dumps(intent_result)
     rabbit_msg = intent_result["message"]
+    print(intent_result)
 
     if code_payment not in range(200, 300):
         return publish_error(message_payment, intent_result,
@@ -155,19 +181,28 @@ def processPlaceOrder(order):
 
     print("\nPayment activity sent to RabbitMQ Exchange Activity Log")
 
-    charge_id = retrieve_chargeID(intent_result)
+    charge_id = intent_result["paymentIntentId"]
+    print('HERE')
 
+    print("\n------Updating Order Status-------")
+
+    # 5. UPDATE ORDER' STATUS
     updated_order = update_order(charge_id, order_id, "PAID")
+    print(updated_order)
+
+    update_msg = updated_order["message"]
+    code_update = updated_order["code"]
     message_updated = json.dumps(updated_order)
 
-    if updated_order["code"] not in range(200, 300):
-        return publish_error(message_updated, updated_order,
-                             updated_order["code"], updated_order["message"])
+    if code_update not in range(200, 300):
+        return publish_error(message_updated, updated_order, code_update, update_msg)
     else:
-        publish_activity(message_updated, updated_order["message"])
+        publish_activity(message_updated, update_msg)
 
+    print("\n------Updating Inventory-------")
     # 6. Update inventory in Box
     updated_box = update_inventory(curr_inventory, quantity, boxID)
+
     code_updatedbox = updated_box["code"]
     message_updatedbox = json.dumps(updated_box)
     rabbit_msg = updated_box["message"]
@@ -177,18 +212,22 @@ def processPlaceOrder(order):
         publish_activity(message_updatedbox, rabbit_msg)
 
     # 7. Return created order, shipping record
+    print(charge_id)
     return {
         "code": 201,
         "data": {
-            "order_result": order_result
+            "order_result": order_result,
+            "payment_id": charge_id,
+            "client_secret": client_secret
         }
     }
 
 
 def update_inventory(curr_inventory, quantity, boxID):
     new_inventory = int(curr_inventory) - int(quantity)
+    print(new_inventory)
     update_box_details = {
-        "inventory": new_inventory
+        "quantity": new_inventory
     }
     update_box_URL = f"{box_URL}/{boxID}"
     updated_box = invoke_http(
@@ -205,22 +244,6 @@ def update_order(charge_id, order_id, status):
     update_URL = f"{order_URL}/update/{order_id}"
     updated_order = invoke_http(update_URL, method="PUT", json=update_details)
     return updated_order
-
-
-def retrieve_chargeID(payment_result):
-    # NOTE: Retrieve charge ID
-
-    # step 1: retrieve session ID from returned object
-    session_id = payment_result["sessionId"]
-    session = stripe.checkout.Session.retrieve(session_id)
-
-    # step 2: create PaymentIntent object
-    payment_intent = stripe.PaymentIntent.retrieve(
-        session.payment_intent, expand=['latest_charge.id'])
-
-    # step 3: get charge id from prev session
-    charge_id = payment_intent.latest_charge.id
-    return charge_id
 
 
 def publish_error(message, order_result, code, rabbit_msg):
@@ -247,7 +270,15 @@ def publish_activity(message, rabbit_msg):
     print('\n\n-----Publishing the (order info) message with routing_key=order.info-----')
     print(rabbit_msg)
     amqp_setup.channel.basic_publish(
-        exchange=amqp_setup.exchangename, routing_key="order.info", body=message)
+        exchange=amqp_setup.exchangename, routing_key="order.info", body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
+def notify(message):
+    print('\n\n----------Send Notification----------')
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key='payment.notify',
+                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
+    print('\n\n----------Notification Sent----------')
+    amqp_setup.channel.close()
 
 
 # Execute this program if it is run as a main script (not by 'import')

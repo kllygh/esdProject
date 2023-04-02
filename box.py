@@ -22,7 +22,7 @@ class Box(db.Model):
     restaurant_id = db.Column(db.Integer, nullable=False)
     cust_id = db.Column(db.Integer, nullable=False)
     postTime = db.Column(db.DateTime, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer)
     collectionTime = db.Column(db.DateTime, nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
     description = db.Column(db.String(64), nullable=False)
@@ -78,6 +78,7 @@ def get_all():
         }
     ), 404
 
+
 # get a post
 
 
@@ -88,7 +89,8 @@ def find_by_boxID(boxID):
         return jsonify(
             {
                 "code": 200,
-                "data": box.json()
+                "data": box.json(),
+                "message": "Box found with inventory."
             }
         )
     return jsonify(
@@ -113,7 +115,8 @@ def update_box(boxID):
         return jsonify(
             {
                 "code": 200,
-                "data": box.json()
+                "data": box.json(),
+                "message": "Box updated successfully"
             }
         )
     return jsonify(

@@ -24,7 +24,7 @@ class Order(db.Model):
 
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_number = db.Column(db.Integer, nullable=False)
-    customer_id = db.Column(db.Integer, nullable=False)
+    customer_id = db.Column(db.String, nullable=False)
     restaurant_id = db.Column(db.Integer, nullable=False)
     boxID = db.Column(db.Integer, nullable=False)  # change to boxID
     charge_id = db.Column(db.String(50), nullable=False, default='NaN')
@@ -63,7 +63,7 @@ class Order(db.Model):
         return order_info
 
 
-@app.route("/order/customer/<int:customer_id>")
+@app.route("/order/customer/<customer_id>")
 def get_all(customer_id):
     # orderlist = Order.query.all()
     orderlist = Order.query.filter_by(customer_id=customer_id).all()
@@ -121,14 +121,16 @@ def create_order():
         return jsonify(
             {
                 "code": 400,
-                "message": "An order with this ID already exists."
+                "message": "An order with this ID already exists.",
+                "data": data
             }
         ), 400
     except Exception as e:
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred while creating the order. " + str(e)
+                "message": "An error occurred while creating the order. " + str(e),
+                "data": data
             }
         ), 500
 
@@ -139,6 +141,7 @@ def create_order():
     return jsonify(
         {
             "code": 201,
+            "message": "Order created successfully",
             "data": order.json()
         }
     ), 201
@@ -163,7 +166,7 @@ def update_order(order_id):
 
     # update status
     data = request.get_json()
-    for field in ['status', 'charge_id', 'refund_id', 'payment_method', 'currency', ]:
+    for field in ['status', 'charge_id', 'refund_id', 'payment_method', 'currency']:
         if field in data:
             # The setattr() function sets the value of the specified attribute of the specified object.
             setattr(order, field, data[field])

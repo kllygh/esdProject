@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `box` (
   `restaurant_id` int NOT NULL,
   `cust_id` varchar(30) NOT NULL,
   `postTime` datetime NOT NULL,
-  `quantity` int NOT NULL,
+  `quantity` int,
   `collectionTime` datetime NOT NULL,
   `price` decimal(10,0) NOT NULL,
   `description` varchar(64) DEFAULT NULL,
@@ -86,6 +86,8 @@ INSERT INTO `box` (`boxID`, `boxName`, `restaurant_id`, `cust_id`, `postTime`, `
 (37, 'Four Leaves', 82963493, '0cxmPeUd0xaFgebi0qrRF5nV4ot1', '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Four Leaves - YTP A','2023-03-24'),
 (38, 'Breadtalk', 82963494, '0cxmPeUd0xaFgebi0qrRF5nV4ot1', '2023-03-18 21:43:02', 2, '2023-03-18 21:43:02', '11', 'nil', 'Breadtalk - JKC A','2023-03-24');
 
+ALTER TABLE box
+MODIFY COLUMN quantity INT UNSIGNED NOT NULL DEFAULT 0;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
