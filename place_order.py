@@ -111,8 +111,12 @@ def processPlaceOrder(order):
 
     if curr_inventory < quantity:
         rabbit_msg = "There is not enough inventory"
-        return publish_error(message_inventory, inventory_result,
-                             code_inventory, rabbit_msg)
+        publish_error(message_inventory, inventory_result,
+                      code_inventory, rabbit_msg)
+        return {
+            "code": 500,
+            "message": "Order failed to place successfully due to insufficient quantity of boxes. Please enter a valid quantity of boxes."
+        }
 
     amqp_setup.check_setup()
 
@@ -236,7 +240,8 @@ def processPlaceOrder(order):
             "order_result": order_result,
             "payment_id": charge_id,
             "client_secret": client_secret
-        }
+        },
+        "message": "Order was placed successfully!"
     }
 
 

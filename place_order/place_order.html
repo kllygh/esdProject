@@ -132,8 +132,8 @@
                   <label for="quantity" class="form-label">Quantity</label>
                   <input type="number" class="form-control" id="quantity" v-model="quantity"
                     aria-describedby="numberHelp">
-                  <div id="numberHelp" class="form-text">Please enter a valid number, or else...
-                  </div>
+                  <span id="numberHelp" style="font-size:14px;">{{quantityMsg}}
+                  </span>
                 </div>
                 <div class="mb-3">
                   <label for="customer-number" class="form-label">Contact Number</label>
@@ -157,6 +157,7 @@
                 </button>
                 <div id="payment-message" class="hidden" sandbox="allow-same-origin">
                   <!-- Display error message to your customers here -->
+                  {{paymentMessage}}
 
                 </div>
               </form>
@@ -260,7 +261,17 @@
           customerNumber: 90907461,
           restaurantID: 82763492,
           box_url: "http://127.0.0.1:5000/box",
-          restaurant_url: "http://127.0.0.1:5300/restaurant"
+          restaurant_url: "http://127.0.0.1:5300/restaurant",
+          paymentMessage: "",
+        }
+      },
+      computed: {
+        quantityMsg() {
+          if (this.quantity > this.inventory) {
+            return "There is insufficient quantity of boxes. Please enter a valid quantity that is within the current quantity available."
+          } else {
+            return "Please enter a valid number :)"
+          }
         }
       },
       methods: {
@@ -352,6 +363,8 @@
 
               if (data.code == 201) {
                 this.handleSubmit(result["client_secret"]);
+              } else {
+                this.paymentMessage = data.message
               }
             })
             .catch(error => {
