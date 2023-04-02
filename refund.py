@@ -3,7 +3,6 @@ import json
 import os
 import amqp_setup
 
-from dotenv import load_dotenv
 import stripe
 from flask import Flask
 import pika
@@ -11,15 +10,10 @@ import pika
 
 app = Flask(__name__)
 
-# load env variables
-load_dotenv()
-
 # get them
 stripeSecretKey = os.environ.get("STRIPE_SECRET_KEY")
 stripePublicKey = os.environ.get("STRIPE_PUBLISHABLE_KEY")
 stripe.api_key = stripeSecretKey
-stripePublicKey = 'pk_test_51MmYEkAZMKLMwhgSfZEJ2itVnibnF9zIb9wJnZlLcTE90hQXj79tC4NivjjLU6Vf5KTiEsYMzDyz8lhg7GGebL8K007UA4ZmhZ'
-stripeSecretKey = 'sk_test_51MmYEkAZMKLMwhgSYhgnvpoB7BqKKNyORw03IaAtnyMJA5z3AFprqqBFJAwbv9SiN9lGtzYKhKk5M5qRU61Mlte000GF44rQT9'
 stripe.api_key = stripeSecretKey
 
 monitorBindingKey = '#.refund'

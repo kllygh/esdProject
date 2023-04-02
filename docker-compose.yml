@@ -152,6 +152,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+      stripePublicKey: 'pk_test_51MmYEkAZMKLMwhgSfZEJ2itVnibnF9zIb9wJnZlLcTE90hQXj79tC4NivjjLU6Vf5KTiEsYMzDyz8lhg7GGebL8K007UA4ZmhZ'
+      stripeSecretKey: 'sk_test_51MmYEkAZMKLMwhgSYhgnvpoB7BqKKNyORw03IaAtnyMJA5z3AFprqqBFJAwbv9SiN9lGtzYKhKk5M5qRU61Mlte000GF44rQT9'
 
 ############################################ Invocation based's Microservices (Complex MS) #################################################
 
@@ -163,6 +165,7 @@ services:
         context: ./
         dockerfile: nearby.Dockerfile
     image: esdproj/nearby:esd
+    restart: always
     depends_on:
       - location
       - box
@@ -187,6 +190,7 @@ services:
         context: ./
         dockerfile: cancel_order.Dockerfile
     image: esdproj/cancel_order:esd
+    restart: always
     depends_on:
       - box
       - order
@@ -219,6 +223,7 @@ services:
       - box
       - payment
       - activity_log
+      - notification
       - error
       - rabbitmq
     environment:

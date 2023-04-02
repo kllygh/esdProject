@@ -22,20 +22,22 @@ class Logs(db.Model):
     __tablename__ = 'activity_log'
 
     activityID = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime, nullable=False)
     activity_details = db.Column(db.String(64), nullable=False)
 
-    def __intit__(self, activityID, activity_details):
+    def __intit__(self, activityID, created, activity_details):
         self.activityID = activityID
+        self.created = created
         self.activity_details = activity_details
 
     def json(self):
         return {"activityID": self.activityID,
+                "created": self.created,
                 "activity_details": self.activity_details
                 }
 
 ############ 2. Receiving the data from the queue #####################################################
 monitorBindingKey = '#.info'
-
 
 def receiveOrderLog():
     amqp_setup.check_setup()
@@ -93,6 +95,7 @@ def processLog(order):
     #         "customer_email": "johndoe@example.com",
     #         "order_date": "2023-04-01 14:30:00"
     #     }
+            
     # }
 
     #Near by: error return
