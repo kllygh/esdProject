@@ -27,7 +27,7 @@ CORS(app)
 location_URL = "http://localhost:5200/location"
 box_URL = "http://127.0.0.1:5000/box"
 rest_URL = "http://127.0.0.1:5300/restaurant"
-get_rest_from_box_ms = "http://localhost:5000/box/rest"
+get_rest_from_box_ms = "http://127.0.0.1:5000/box/rest"
 
 #################### Call on Near By Complex MS ####################################################################
 
@@ -42,9 +42,14 @@ def near_by():
 
             # do the actual work
             customer_location = customer_location["cust_location"]
+            # result = processNearByLocation(customer_location)
             result = processNearByLocation(customer_location)
+
+            print("--------------result: ", result)
+            
             code = result["code"]
-            message = json.dumps(result)
+            print("--------------status code: ", code)
+            message = result['message']
 
             ######################## Send to AMQP ##########################################
             if code not in range(200, 300):
@@ -53,13 +58,13 @@ def near_by():
                 return {
                     "code": 500,
                     "data": result,
-                    "message": "Nearby Microservice failure sent for error handling."
+                    "message": message
                 }
             routing_key = 'retrieveDetails.info'
             updateActivityandError(code, message, result, routing_key)
             ####################### End of AMQP ##########################################
 
-            return jsonify(message), result["code"]
+            return jsonify(result), result["code"]
 
         except Exception as e:
             # Unexpected error in code
@@ -137,16 +142,16 @@ def processNearByLocation(customer_location):
     print("box_info",box_info)
 
     if box_info:
-        return jsonify({
+        return {
                 "code": 200,
-                "data": box_info, #would be a array of all the box information taken from box ms
+                "data": box_info, #would be a array of all the box information (dict) taken from box ms
                 "message": "Sent box information for top 20 recommended nearby places."
-            }), 200
+            }
 
-    return jsonify({
+    return {
         "code": 400,
         "message": "Unable to find top 20 recommended nearby places."
-    }), 200
+    }
 
 #################### AMQP activity log and error handling ############################################################
 def updateActivityandError(code, message, result, rKey):
