@@ -105,7 +105,7 @@ def get_by_restaurant_id():
 
 
 if __name__ == '__main__':
-    app.run(port=5300, debug=True)
+    app.run(port=5300, host='0.0.0.0', debug=True)
 
 
 
