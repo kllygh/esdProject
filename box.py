@@ -131,8 +131,34 @@ def update_box(boxID):
         }
     ), 404
 
-# delete a post
+# update box if inventory 0
 
+
+@app.route("/box/set-inventory-zero/<int:boxID>", methods=["PUT"])
+def set_inventory(boxID):
+    box = Box.query.filter_by(boxID=boxID).first()
+    if box:
+        box.quantity = None
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": box.json(),
+                "message": "Box updated inventory to zero"
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "boxID": boxID
+            },
+            "message": "Box not found."
+        }
+    ), 404
+
+
+# delete a post
 
 @app.route("/box/<int:boxID>", methods=['DELETE'])
 def delete_box(boxID):
