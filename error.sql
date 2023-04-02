@@ -13,19 +13,19 @@ SET time_zone = "+00:00";
 -- Table structure for table `activity_log`
 --
 
-CREATE DATABASE IF NOT EXISTS `activity_log` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `activity_log`;
+CREATE DATABASE IF NOT EXISTS `error` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `error`;
 
-DROP TABLE IF EXISTS `activity_log`;
-CREATE TABLE IF NOT EXISTS `activity_log` (
-  `activityID` int NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `error`;
+CREATE TABLE IF NOT EXISTS `error` (
+  `errorID` int NOT NULL AUTO_INCREMENT,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `activity_details` varchar(30) NOT NULL,
-  PRIMARY KEY (`activityID`)
+  `error_details` varchar(30) NOT NULL,
+  PRIMARY KEY (`errorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
-INSERT INTO `activity_log` (`activityID`, `created`, `activity_details`) VALUES
+INSERT INTO `error` (`errorID`, `created`, `error_details`) VALUES
 (1,'2023-03-26 21:43:02','Order not found.'),
 COMMIT;
 
