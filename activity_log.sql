@@ -26,8 +26,5 @@ CREATE TABLE IF NOT EXISTS `activity_log` (
 
 
 INSERT INTO `activity_log` (`activityID`, `created`, `activity_details`) VALUES
-(1,'2023-03-26 21:43:02','Order not found.'),
-COMMIT;
-
-
-
+(1,'2023-03-26 21:43:02','Order not found.');
+ALTER TABLE activity_log
