@@ -18,10 +18,10 @@ app = Flask(__name__)
 CORS(app)
 
 
-order_URL = environ.get('order_URL') or "http://localhost:5001/order"
-box_URL = environ.get('box_URL') or "http://localhost:5000/box"
+order_URL = environ.get('order_URL') or "http://127.0.0.1:5001/order"
+box_URL = environ.get('box_URL') or "http://127.0.0.1:5000/box"
 payment_URL = environ.get(
-    "payment_URL") or "http://localhost:6002/payment"
+    "payment_URL") or "http://127.0.0.1:6002/payment"
 
 
 @app.route("/place_order", methods=['POST'])
@@ -136,8 +136,9 @@ def processPlaceOrder(order):
     code_order = order_result["code"]
     message_order = json.dumps(order_result)
     rabbit_msg = order_result["message"]
-    order_id = order_result["data"]["order_id"]
+    order_id = str(order_result["data"]["order_id"])
 
+    amqp_setup.check_setup()
     if code_order not in range(200, 300):
         return publish_error(message_order, order_result, code_order, rabbit_msg)
     else:
@@ -146,8 +147,12 @@ def processPlaceOrder(order):
     print("\nOrder activity sent to RabbitMQ Exchange Activity Log")
 
     print("\n------Notify customer on Order Confirmation-------")
+
+    customer_number = f'+65{customer_number}'
     msg = json.dumps({
-        "notif_details": [customer_number, customer_id, order_id, collection_time, location, total_bill, ]
+        "OrderSuccess": [
+            customer_number, customer_id, order_id, collection_time, location
+        ]
     })
     notify(msg)
 
@@ -173,6 +178,7 @@ def processPlaceOrder(order):
     rabbit_msg = intent_result["message"]
     print(intent_result)
 
+    amqp_setup.check_setup()
     if code_payment not in range(200, 300):
         return publish_error(message_payment, intent_result,
                              code_payment, rabbit_msg)
@@ -184,6 +190,14 @@ def processPlaceOrder(order):
     charge_id = intent_result["paymentIntentId"]
     print('HERE')
 
+    print("\n------Notify customer on Transaction Completed-------")
+    total_bill = str(total_bill)
+    customer_number = str(customer_number)
+    msg = json.dumps({
+        "transactionSuccess": [customer_number, total_bill, charge_id]
+    })
+    notify(msg)
+
     print("\n------Updating Order Status-------")
 
     # 5. UPDATE ORDER' STATUS
@@ -194,6 +208,7 @@ def processPlaceOrder(order):
     code_update = updated_order["code"]
     message_updated = json.dumps(updated_order)
 
+    amqp_setup.check_setup()
     if code_update not in range(200, 300):
         return publish_error(message_updated, updated_order, code_update, update_msg)
     else:
@@ -206,6 +221,8 @@ def processPlaceOrder(order):
     code_updatedbox = updated_box["code"]
     message_updatedbox = json.dumps(updated_box)
     rabbit_msg = updated_box["message"]
+
+    amqp_setup.check_setup()
     if updated_box["code"] not in range(200, 300):
         return publish_error(message_updatedbox, updated_box, code_updatedbox, rabbit_msg)
     else:
@@ -226,12 +243,17 @@ def processPlaceOrder(order):
 def update_inventory(curr_inventory, quantity, boxID):
     new_inventory = int(curr_inventory) - int(quantity)
     print(new_inventory)
-    update_box_details = {
-        "quantity": new_inventory
-    }
-    update_box_URL = f"{box_URL}/{boxID}"
-    updated_box = invoke_http(
-        update_box_URL, method="PUT", json=update_box_details)
+    if new_inventory == 0:
+        update_box_URL = f"{box_URL}/set-inventory-zero/{boxID}"
+        updated_box = invoke_http(
+            update_box_URL, method="PUT")
+    else:
+        update_box_details = {
+            "quantity": new_inventory
+        }
+        update_box_URL = f"{box_URL}/{boxID}"
+        updated_box = invoke_http(
+            update_box_URL, method="PUT", json=update_box_details)
     return updated_box
 
 
@@ -278,7 +300,6 @@ def notify(message):
     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key='payment.notify',
                                      body=message, properties=pika.BasicProperties(delivery_mode=2))
     print('\n\n----------Notification Sent----------')
-    amqp_setup.channel.close()
 
 
 # Execute this program if it is run as a main script (not by 'import')
