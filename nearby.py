@@ -11,6 +11,7 @@ from flask_cors import CORS
 import os, sys
 
 import requests
+from invokes import invoke_http
 
 import json
 
@@ -42,7 +43,7 @@ def near_by():
             customer_location = customer_location["cust_location"]
             result = processNearByLocation(customer_location)
             code = result["code"]
-            message = json.dumps(result['data'])
+            message = json.dumps(result)
 
             ######################## Send to AMQP ##########################################
             if code not in range(200, 300):
@@ -121,12 +122,23 @@ def processNearByLocation(customer_location):
 #################### AMQP activity log and error handling ############################################################
 def updateActivityandError(code, message, result, rKey):
     amqp_setup.check_setup()
-    print('\n\n-----Publishing the error message with routing_key=' + rKey + '-----')
 
-    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key=rKey, 
-        body=message, properties=pika.BasicProperties(delivery_mode = 2))      
-    print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
-        code), result)
+    if code not in range(200, 300):
+        print('\n\n-----Publishing the error message with routing_key=' + rKey + '-----')
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key=rKey, 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2))      
+        print("\nStatus ({:d}) published to the RabbitMQ Exchange:".format(
+            code), result)
+
+    else:
+        print('\n\n-----Publishing the info message with routing_key=' + rKey + '-----')        
+
+        # invoke_http(activity_log_URL, method="POST", json=order_result)            
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key=rKey, 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2))
+    
+    print("\nPublished to RabbitMQ Exchange.\n")
 
 #################### Execute this program if it is run as a main script (not by 'import') ############################
 if __name__ == "__main__":

@@ -91,7 +91,7 @@ def find_nearest_location():
     return jsonify(
         {
             "code": 404,
-            "data": nearest_locations,
+            "data": data["starting_location"],
             "message": "Unable to suggest top 20 nearest locaion."
         }
     ), 404

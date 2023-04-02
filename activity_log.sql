@@ -35,15 +35,16 @@ USE `activity_log`;
 DROP TABLE IF EXISTS `activity_log`;
 CREATE TABLE IF NOT EXISTS `activity_log` (
   `activityID` int NOT NULL AUTO_INCREMENT,
-  `Datetime_stamp` datetime NOT NULL,
-  `customer_id` int NOT NULL,
-  `activity_type` varchar(30) NOT NULL,
+  -- `Datetime_stamp` datetime NOT NULL,
+  -- `customer_id` int NOT NULL,
   `activity_details` varchar(30) NOT NULL,
   PRIMARY KEY (`activityID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `activity_log` (`activityID`, `Datetime_stamp`, `customer_id`, `activity_type`, `activity_details`) VALUES
-(1,'2023-03-26 21:43:02','0cxmPeUd0xaFgebi0qrRF5nV4ot1','',''),
+
+-- to be editted!
+INSERT INTO `activity_log` (`activityID`, `Datetime_stamp`, `customer_id`,`activity_details`) VALUES
+(1,'2023-03-26 21:43:02','0cxmPeUd0xaFgebi0qrRF5nV4ot1','Order not found.'),
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
