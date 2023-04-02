@@ -85,7 +85,8 @@ def find_nearest_location():
         return jsonify(
             {
                 "code": 200,
-                "data": nearest_locations
+                "data": nearest_locations,
+                "message": "Nearest 20 locations successfully retrieved"
             }
         )
     return jsonify(
