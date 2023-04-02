@@ -96,12 +96,12 @@
                   </tr>
                   <tr>
                     <td>ABC</td>
-                    <td>2</td>
-                    <td>31/3/23</td>
+                    <td>3</td>
+                    <td>2020-06-12 02:14:55</td>
                     <td>21:45</td>
-                    <td>8.00</td>
+                    <td>9.00</td>
                     <td>Collected</td>
-                    <td><button @click="requestRefund"class="btn">Refund</button></td>
+                    <td><button @click="cancel_order"class="btn">Refund</button></td>
                   </tr>
                   <tr>
                     <td>DEF</td>
@@ -215,7 +215,8 @@
             customer_id:100,
             quantity:0,
             order_time:"2023-04-01",
-            bill:0
+            bill:0,
+            order_id:0
           }
         },
         methods: {
@@ -231,13 +232,26 @@
                 this.quantity = data.data.quantity;
                 this.order_time = data.data.created;
                 this.bill = data.data.total_bill;
+                this.order_id = data.data.order_id;
               }
             })
             .catch(error => {
               console.log(this.message + error);
             });
           },
+          cancel_order(){
+            const cancel_order_url="http://localhost:5500/cancel_order";
+            const orderID = 1;
+            fetch(`${cancel_order_url}/${orderID}`,{method:'POST'})
+            .then(response => response.json())
+            .then(data =>{
+              console.log(data.message)
+            })
+
+            
+          }
         }
+
       }).mount('#app')
 
       
