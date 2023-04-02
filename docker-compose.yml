@@ -108,7 +108,7 @@ services:
     image: esdproj/restaurant:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
+      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
     ports:
       - "5300:5300"
 
