@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import os
 import stripe
 from flask import Flask, jsonify, request
@@ -6,8 +5,6 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-
-load_dotenv()
 
 stripe_secret_key = os.environ.get(
     "STRIPE_SECRET_KEY") or "sk_test_51Mmaq9Kcs6la72jh0v2KAFQGvOWzqEVksC3hLHdDwf7UfuTRLxS62UVBJFxdZfnvGHcWLVmSuHLypH5kyHWGaQuy00wKtjTYqW"

@@ -26,7 +26,8 @@ CORS(app)
 
 location_URL = "http://localhost:5200/location"
 box_URL = "http://127.0.0.1:5000/box"
-rest_URL = "http://localhost:5300/restaurant"
+rest_URL = "http://127.0.0.1:5300/restaurant"
+get_rest_from_box_ms = "http://localhost:5000/box/rest"
 
 #################### Call on Near By Complex MS ####################################################################
 
@@ -116,8 +117,36 @@ def processNearByLocation(customer_location):
     print('order_result:',nearby_locations)
     print('\n-----End of Location microservice-----')
 
-    #check if this return way is correct
-    return nearby_locations
+    ###### 5. Return the box information for the top 20 restaurant base on their restaurant_ids #################
+
+    # nearby would return the below
+    print("\n-----Start of trying to return the box information-----")
+    restaurant_info = nearby_locations['data'] #{"restaurant_id": , "restaurant_name": , "restaurant_location": , "latitude": , "longitude": }
+    print("restaurant_info",restaurant_info)
+    # loop through the rest_info and then query the box ms to give you the information and then send it back
+    box_info = []
+    for restaurant in restaurant_info:
+        restaurant_id = restaurant[0]
+        # call on the box URL
+        print("restaurant_id",restaurant_id)
+        box_indi_info = invoke_http(get_rest_from_box_ms + "/" + str(restaurant_id))
+        print("box_indi_info",box_indi_info)
+        box_array = box_indi_info['data']['box']
+        for box in box_array:
+            box_info.append(box)
+    print("box_info",box_info)
+
+    if box_info:
+        return jsonify({
+                "code": 200,
+                "data": box_info, #would be a array of all the box information taken from box ms
+                "message": "Sent box information for top 20 recommended nearby places."
+            }), 200
+
+    return jsonify({
+        "code": 400,
+        "message": "Unable to find top 20 recommended nearby places."
+    }), 200
 
 #################### AMQP activity log and error handling ############################################################
 def updateActivityandError(code, message, result, rKey):

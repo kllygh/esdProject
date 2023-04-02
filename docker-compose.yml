@@ -144,7 +144,7 @@ services:
     build:
       context: ./
       dockerfile: refund.Dockerfile
-    image: esdproj/order:esd
+    image: esdproj/refund:esd
     restart: always
     depends_on:
       - rabbitmq

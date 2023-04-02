@@ -68,7 +68,8 @@ def get_all():
                 "code": 200,
                 "data": {
                     "boxes": [box.json() for box in boxlist]
-                }
+                },
+                "message": "All boxes have been successfully retrieved."
             }
         )
     return jsonify(
@@ -169,7 +170,8 @@ def delete_box(boxID):
                 "code": 200,
                 "data": {
                     "boxID": boxID
-                }
+                },
+                "message": "Box have been successfully deleted."
             }
         )
     return jsonify(
@@ -195,7 +197,8 @@ def find_by_restaurantID(restaurant_id):
                 "code": 200,
                 "data": {
                     'box': [box.json() for box in boxlist]
-                }
+                },
+                "message": "Boxes from restaurant have been successfully retrieved."
             }
         )
     return jsonify(
