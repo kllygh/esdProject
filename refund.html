@@ -101,7 +101,7 @@
                     <td>21:45</td>
                     <td>8.00</td>
                     <td>Collected</td>
-                    <td><button class="btn">Refund</button></td>
+                    <td><button @click="requestRefund"class="btn">Refund</button></td>
                   </tr>
                   <tr>
                     <td>DEF</td>
@@ -211,10 +211,11 @@
         data(){
           return {
             past_orders:[],
-            order_url: "http://127.0.0.1:5001/order/customer",
+            order_url: "http://localhost:5001/order/customer",
             customer_id:100,
             quantity:0,
-            order_time:"2023-04-01"
+            order_time:"2023-04-01",
+            bill:0
           }
         },
         methods: {
@@ -235,9 +236,11 @@
             .catch(error => {
               console.log(this.message + error);
             });
-          }
+          },
         }
       }).mount('#app')
+
+      
       //fetch('http://localhost:5001/orders')
       //.then(response => response.text())
       //.then(html => {
