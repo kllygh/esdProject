@@ -3,12 +3,11 @@ import json
 import os
 import amqp_setup
 
-import stripe
-from flask import Flask
+# from flask import Flask
 import pika
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 # get them
 stripeSecretKey = os.environ.get("STRIPE_SECRET_KEY")
