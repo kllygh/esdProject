@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from os import environ
 
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/restaurant'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl')
+# 'mysql+mysqlconnector://root@localhost:3306/restaurant'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -103,7 +105,7 @@ def get_by_restaurant_id():
 
 
 if __name__ == '__main__':
-    app.run(port=5300, debug=True)
+    app.run(port=5300, host='0.0.0.0', debug=True)
 
 
 

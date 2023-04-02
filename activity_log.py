@@ -1,12 +1,45 @@
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+
+from flask_cors import CORS
+from datetime import date
+
 import json
 import os
 
 import amqp_setup
 
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/activity_log'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+############ 1. Creation of the database #####################################################
+db = SQLAlchemy(app)
+CORS(app)
+
+class Logs(db.Model):
+    __tablename__ = 'activity_log'
+
+    activityID = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime, nullable=False)
+    activity_details = db.Column(db.String(64), nullable=False)
+
+    def __intit__(self, activityID, created, activity_details):
+        self.activityID = activityID
+        self.created = created
+        self.activity_details = activity_details
+
+    def json(self):
+        return {"activityID": self.activityID,
+                "created": self.created,
+                "activity_details": self.activity_details
+                }
+
+############ 2. Receiving the data from the queue #####################################################
 monitorBindingKey = '#.info'
 
-
-def receiveOrderLog():
+def receiveLog():
     amqp_setup.check_setup()
 
     queue_name = 'Activity_log'
@@ -18,17 +51,30 @@ def receiveOrderLog():
 
 def callback(channel, method, properties, body):
     print("\nReceived an order log by " + __file__)
-    processOrderLog(json.loads(body))
+    processLog(json.loads(body))
     print()
 
+############ 3. Adding into Database, SQL #####################################################
 
-def processOrderLog(order):
-    print("Recording an order log:")
-    print(order)
+def processLog(logs):
+    print("Recording an log:")
+    print(logs)
+    newLogs = logs['message'] #everyone need to change their MS to return message also!
 
+    db.session.add(newLogs)
+    db.session.commit()
+
+    #should be like this
+    # {
+    #     "code": 404,
+    #     "data": {
+    #         "order_id": 12345
+    #     },
+    #     "message": "Order not found." ---> REQUIRED
+    # }
 
 if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
     print(": monitoring routing key '{}' in exchange '{}' ...".format(
         monitorBindingKey, amqp_setup.exchangename))
-    receiveOrderLog()
+    receiveLog()

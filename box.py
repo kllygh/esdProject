@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-# from os import environ
+from os import environ
 from flask_cors import CORS
 from datetime import date
 
 app = Flask(__name__)
 # app.config['SQLAlCHEMY_DATABASE_URI'] = environ.get('dbURL')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/box'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl')
+# 'mysql+mysqlconnector://root:root@localhost:3306/box'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -22,7 +23,7 @@ class Box(db.Model):
     restaurant_id = db.Column(db.Integer, nullable=False)
     cust_id = db.Column(db.Integer, nullable=False)
     postTime = db.Column(db.DateTime, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer)
     collectionTime = db.Column(db.DateTime, nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
     description = db.Column(db.String(64), nullable=False)
@@ -68,7 +69,8 @@ def get_all():
                 "code": 200,
                 "data": {
                     "boxes": [box.json() for box in boxlist]
-                }
+                },
+                "message": "All boxes have been successfully retrieved."
             }
         )
     return jsonify(
@@ -77,6 +79,7 @@ def get_all():
             "message": "There are no boxes."
         }
     ), 404
+
 
 # get a post
 
@@ -88,7 +91,8 @@ def find_by_boxID(boxID):
         return jsonify(
             {
                 "code": 200,
-                "data": box.json()
+                "data": box.json(),
+                "message": "Box found with inventory."
             }
         )
     return jsonify(
@@ -113,7 +117,8 @@ def update_box(boxID):
         return jsonify(
             {
                 "code": 200,
-                "data": box.json()
+                "data": box.json(),
+                "message": "Box updated successfully"
             }
         )
     return jsonify(
@@ -126,8 +131,34 @@ def update_box(boxID):
         }
     ), 404
 
-# delete a post
+# update box if inventory 0
 
+
+@app.route("/box/set-inventory-zero/<int:boxID>", methods=["PUT"])
+def set_inventory(boxID):
+    box = Box.query.filter_by(boxID=boxID).first()
+    if box:
+        box.quantity = None
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": box.json(),
+                "message": "Box updated inventory to zero"
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "boxID": boxID
+            },
+            "message": "Box not found."
+        }
+    ), 404
+
+
+# delete a post
 
 @app.route("/box/<int:boxID>", methods=['DELETE'])
 def delete_box(boxID):
@@ -140,7 +171,8 @@ def delete_box(boxID):
                 "code": 200,
                 "data": {
                     "boxID": boxID
-                }
+                },
+                "message": "Box have been successfully deleted."
             }
         )
     return jsonify(
@@ -166,7 +198,8 @@ def find_by_restaurantID(restaurant_id):
                 "code": 200,
                 "data": {
                     'box': [box.json() for box in boxlist]
-                }
+                },
+                "message": "Boxes from restaurant have been successfully retrieved."
             }
         )
     return jsonify(
