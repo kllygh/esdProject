@@ -102,9 +102,9 @@
                             </div>
                           </div>
                           <div class="d-grid gap-3 col-sm-auto">
-                            
-                            <button @click="near_by2" class="btn btn-danger" >Find Me</button>
-                            <button @click="near_by()" class="btn btn-danger" >Find Food</button>
+                            <!-- <input class="form-control input-box form-foodwagon-control" id="location" type="text" placeholder="Address" v-model="customer_location" /> -->
+                            <button @click="near_by2" class="btn btn-danger">Find Me</button>
+                            <!-- <button @click="near_by()" class="btn btn-danger" >Find Food</button> -->
                           </div>
                         </form>
 
@@ -156,6 +156,8 @@
                   <h5 class="fw-bold fs-3 fs-lg-5 lh-sm">Today's Mystery Food Boxes</h5>
                   <button @click="get_all()" class="btn btn-danger">Get all Posts for Today</button>
                 </div>
+
+                
   
                 <div class="col-12" v-if="hasBoxes">
                   <div class="row gx-3 h-30 align-items-center">
@@ -624,6 +626,10 @@
 
           methods: {
 
+            // near_by3(){
+            //   console.log("yo")
+            // },
+
             near_by2(){
               console.log("ha")
               const response = 
@@ -636,12 +642,11 @@
                                   "customer_location": this.customer_location
                                 }
                               )
-            })
-              
+              })
                   .then(response => response.json())
                   .then(data => {
                               console.log(response);
-                              if (data.code === 404) {
+                              if (data.code === 400) {
                                   // no box in db
                                   this.message = data.message ;
                               } 
@@ -659,7 +664,7 @@
               // GET ALL BOXES
               get_all () {
                   // on Vue instance created, load the box list
-                  // console.log("afnlf")
+                  console.log("afnlf")
                   const response =
                       fetch(box_URL)
                           .then(response => response.json())

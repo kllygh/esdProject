@@ -66,6 +66,13 @@ def near_by():
 
             return jsonify(result), result["code"]
 
+
+            # return {
+            #     "code": 200,
+            #     "data": box_info, #would be a array of all the box information (dict) taken from box ms
+            #     "message": "Sent box information for top 20 recommended nearby places."
+            # }
+
         except Exception as e:
             # Unexpected error in code
             exc_type, exc_obj, exc_tb = sys.exc_info()
