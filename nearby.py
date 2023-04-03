@@ -12,7 +12,7 @@ import os, sys
 
 import requests
 from invokes import invoke_http
-
+from os import environ
 import json
 
 import pika
@@ -24,10 +24,10 @@ CORS(app)
 
 #################### Microservices URL #############################################################################
 
-location_URL = "http://localhost:5200/location"
-box_URL = "http://127.0.0.1:5000/box"
-rest_URL = "http://127.0.0.1:5300/restaurant"
-get_rest_from_box_ms = "http://127.0.0.1:5000/box/rest"
+location_URL = environ.get("location_URL")
+box_URL = environ.get("box_URL")
+rest_URL = environ.get("rest_URL")
+get_rest_from_box_ms = environ.get("box_URL") + "/rest/"
 
 #################### Call on Near By Complex MS ####################################################################
 
@@ -41,7 +41,7 @@ def near_by():
             print("\nReceived an request in JSON:", customer_location)
 
             # do the actual work
-            customer_location = customer_location["cust_location"]
+            customer_location = customer_location["customer_location"]
             # result = processNearByLocation(customer_location)
             result = processNearByLocation(customer_location)
 
@@ -134,7 +134,7 @@ def processNearByLocation(customer_location):
         restaurant_id = restaurant[0]
         # call on the box URL
         print("restaurant_id",restaurant_id)
-        box_indi_info = invoke_http(get_rest_from_box_ms + "/" + str(restaurant_id))
+        box_indi_info = invoke_http(box_URL + "/rest/" + str(restaurant_id))
         print("box_indi_info",box_indi_info)
         box_array = box_indi_info['data']['box']
         for box in box_array:
