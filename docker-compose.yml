@@ -111,6 +111,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/activity_log
 
   ######################################
   # Error: The Error microservice
@@ -127,6 +128,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+      dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/error
 
 ############################################ Invocation based's Microservices (Simple MS) #################################################
 

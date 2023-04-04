@@ -6,12 +6,14 @@ from datetime import date
 
 import json
 import os
+from os import environ
 
 import amqp_setup
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/activity_log'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl') or 'mysql+mysqlconnector://root:root@localhost:3306/activity_log'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 
 ############ 1. Creation of the database #####################################################
@@ -52,7 +54,7 @@ def receiveLog():
 def callback(channel, method, properties, body):
     print("\nReceived an order log by " + __file__)
     processLog(json.loads(body))
-    print()
+#     print()
 
 ############ 3. Adding into Database, SQL #####################################################
 
@@ -60,9 +62,16 @@ def processLog(logs):
     print("Recording an log:")
     print(logs)
     newLogs = logs['message'] #everyone need to change their MS to return message also!
+    print(newLogs)
 
-    db.session.add(newLogs)
-    db.session.commit()
+    # aLog = Logs(activity_details = newLogs)
+    # db.session.add(aLog)
+    # db.session.commit()
+
+    with app.app_context():
+        aLog = Logs(activity_details=newLogs)
+        db.session.add(aLog)
+        db.session.commit()
 
     #should be like this
     # {
@@ -78,3 +87,12 @@ if __name__ == "__main__":
     print(": monitoring routing key '{}' in exchange '{}' ...".format(
         monitorBindingKey, amqp_setup.exchangename))
     receiveLog()
+
+# test =    {
+#         "code": 404,
+#         "data": {
+#             "order_id": 12345
+#         },
+#         "message": "Order not found."
+#     }
+# processLog(test)
