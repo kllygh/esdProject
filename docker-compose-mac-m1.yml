@@ -35,8 +35,8 @@ services:
   #######################################
   kong-migration:
     image: kong:2.0.4
-    platform: linux/amd64
     command: "kong migrations bootstrap"
+    platform: linux/amd64
     restart: on-failure
     environment:
       KONG_DATABASE: postgres
@@ -51,8 +51,8 @@ services:
   #######################################
   kong:
     image: kong:2.0.4
-    restart: always
     platform: linux/amd64
+    restart: always
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
@@ -215,6 +215,8 @@ services:
     environment:
       dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
 
   #################################################
   # Refund: The Refund an Order microservice
