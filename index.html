@@ -203,7 +203,7 @@
                       <button @click="place_order(box.boXID)" type="button" class="btn btn-primary">Place
                         Order</button>
                     </template>
-                    
+
                   </div>
                 </div>
               </div>
@@ -520,7 +520,7 @@
     </script>
   <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
 
-  <script>  
+  <script>
     const app = Vue.createApp({
       computed: {
         hasBoxes: function () {
@@ -568,7 +568,7 @@
         //   console.log("yo")
         // },
 
-        
+
 
         near_by2() {
           console.log("ha")
@@ -794,7 +794,12 @@
       },
       methods: {
         place_order(boxID) {
-          this.$router.push({ name: "place_order", query: { boxID } });
+          this.$router.push({
+            name: "place_order",
+            query: {
+              boxID
+            }
+          });
         },
       },
     };

@@ -18,8 +18,8 @@ app = Flask(__name__)
 CORS(app)
 
 
-order_URL = environ.get('order_URL') 
-box_URL = environ.get('box_URL') 
+order_URL = environ.get('order_URL')
+box_URL = environ.get('box_URL')
 payment_URL = environ.get("payment_URL")
 
 
@@ -121,6 +121,7 @@ def processPlaceOrder(order):
 
     if code_inventory not in range(200, 300):
         # publish to error
+
         return publish_error(message_inventory, inventory_result,
                              code_inventory, rabbit_msg)
 
@@ -310,4 +311,4 @@ def notify(message):
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
           " for placing an order...")
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    app.run(host="0.0.0.0", port=5111, debug=True)

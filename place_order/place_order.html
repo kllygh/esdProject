@@ -110,7 +110,7 @@
             <div><img src="../assets/img/gallery/mystery_image.jpg" width="100%" height="auto" /></div>
             <div id="app">
               <a style="font-weight:bold; font-size:23px;" id="Name">Name: </a> <a style="font-size:20px;">
-                {{boxName}}</a><br>
+                {{postName}}</a><br>
 
               <a style="font-weight:bold; font-size:23px;" id="Restaurent">Restaurant: </a><a style="font-size:20px;">
                 {{ restaurant }}</a><br>
@@ -241,15 +241,15 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script>
     export default {
-        data() {
-          return {
-            boxID: null,
-          };
-        },
-        mounted() {
-          this.boxID = this.$route.query.boxID;
-        },
-      };
+      data() {
+        return {
+          boxID: null,
+        };
+      },
+      mounted() {
+        this.boxID = this.$route.query.boxID;
+      },
+    };
 
     const {
       createApp
@@ -261,7 +261,7 @@
           restaurant: "Subway",
           // NOTE would this be the RESTAURANT NAME or the BOX NAME?
           // are both coordinated as well
-          boxName: "",
+          postName: "",
           location: "",
           collectionTime: "2023-03-26 21:43:02",
           boxID: 1, // NOTE need to generate from ui
@@ -299,7 +299,7 @@
                 this.restaurantID = data.data.restaurant_id;
                 this.collectionTime = data.data.collectionTime;
                 this.inventory = data.data.quantity;
-                this.boxName = data.data.boxName;
+                this.postName = data.data.postName;
                 this.getRestaurantInfo()
 
               }
