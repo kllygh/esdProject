@@ -212,6 +212,8 @@ services:
     environment:
       dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/order
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
 
   #################################################
   # Refund: The Refund an Order microservice

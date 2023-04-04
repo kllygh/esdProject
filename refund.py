@@ -10,8 +10,8 @@ import pika
 # app = Flask(__name__)
 
 # get them
-stripeSecretKey = os.environ.get("STRIPE_SECRET_KEY")
-stripePublicKey = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+stripeSecretKey = os.environ.get("stripeSecretKey")
+stripePublicKey = os.environ.get("stripePublicKey")
 stripe.api_key = stripeSecretKey
 stripe.api_key = stripeSecretKey
 
