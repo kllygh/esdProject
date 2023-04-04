@@ -240,17 +240,6 @@
   <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script>
-    export default {
-      data() {
-        return {
-          boxID: null,
-        };
-      },
-      mounted() {
-        this.boxID = this.$route.query.boxID;
-      },
-    };
-
     const {
       createApp
     } = Vue
@@ -264,7 +253,7 @@
           postName: "",
           location: "",
           collectionTime: "2023-03-26 21:43:02",
-          boxID: 1, // NOTE need to generate from ui
+          boxID: null, // NOTE need to generate from ui
           customerID: 'abc100',
           // need help with getting this customer ID from local= storage somehow its null
           quantity: 1,
@@ -276,6 +265,13 @@
           paymentMessage: "",
         }
       },
+
+      mounted() {
+        const myData = JSON.parse(localStorage.getItem('myData'));
+        console.log(myData)
+        this.boxID = myData
+      },
+
       computed: {
         quantityMsg() {
           if (this.quantity > this.inventory) {

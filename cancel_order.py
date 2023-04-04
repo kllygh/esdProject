@@ -40,7 +40,12 @@ def CancelOrder(OrderID):
                     "message": "Unable to find Order."
                 }, 500
             routing_key = 'retrieveDetails.info'
-            updateActivityandError(code, message, order, routing_key)
+            activity = json.dumps({
+                "code": 200,
+                "data": {"cancel_order_result": order['data'], "status": "Success"},
+                "message": "Retrieved Box successfully."
+            })
+            updateActivityandError(code, activity, order, routing_key)
 
             print('\n\n--------2. Sending to ProcessCancelOrder--------')
             result = ProcessCancelOrder(order['data'])
@@ -84,22 +89,10 @@ def CancelOrder(OrderID):
 
 def ProcessCancelOrder(orderDetails):
     #update inventory
-    print('\n\n--------3. Start Update Inventory--------')
+    print('\n\n--------3. Start Update Box Inventory--------')
     quantity = orderDetails["quantity"]
     boxID = str(orderDetails["boxID"])
     box = invoke_http(boxURL + '/' + boxID)
-    # code = box["code"]
-    # message = json.dumps(box)
-    # if code not in range(200, 300):
-    #     routing_key = 'retrieveBox.error'
-    #     updateActivityandError(code, message, box, routing_key)
-    #     return {
-    #         "code": 500,
-    #         "data": {"cancel_order_result": box, "status": "Failed"},
-            
-    #     }
-    # routing_key = 'retrieveBox.info'
-    # updateActivityandError(code, message, box, routing_key)
 
     quantity += box["data"]["quantity"] #new quantity to update
     quantity_json = {"quantity": quantity}
@@ -113,10 +106,10 @@ def ProcessCancelOrder(orderDetails):
             "code": 500,
             "data": {"cancel_order_result": box, "status": "Failed"},
             "message": "Unable to update inventory."
-        }
+        },500
     routing_key = 'updateInventory.info' 
     updateActivityandError(code, message, box, routing_key)
-    print('\n\n--------4. End update Inventory--------')
+    print('\n\n--------4. End update Box Inventory--------')
 
     #start refunding
     global phoneNo
