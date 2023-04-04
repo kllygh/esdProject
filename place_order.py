@@ -124,7 +124,7 @@ def processPlaceOrder(order):
         return publish_error(message_inventory, inventory_result,
                              code_inventory, rabbit_msg)
 
-    # if order success
+    # if inventory is sufficient
     else:
         publish_activity(message_inventory, rabbit_msg)
 

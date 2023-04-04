@@ -6,10 +6,9 @@ from datetime import date
 
 app = Flask(__name__)
 # app.config['SQLAlCHEMY_DATABASE_URI'] = environ.get('dbURL')
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl')
-# 'mysql+mysqlconnector://root:root@localhost:3306/box'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/box'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 CORS(app)
