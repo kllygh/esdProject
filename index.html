@@ -775,6 +775,12 @@
 
         },
 
+        // send boxID to place order
+
+        place_order(boxID) {
+          this.$router.push({ name: "place_order", query: { boxID } });
+        },
+
         // created () {
         //   // on Vue instance created, load the box list
         //   console.log("anything2")
@@ -785,19 +791,9 @@
     });
     const vm = app.mount('#app');
 
-    // send to place_order
-    export default {
-      data() {
-        return {
-          boxID: "", // Replace with the actual box ID value
-        };
-      },
-      methods: {
-        place_order(boxID) {
-          this.$router.push({ name: "place_order", query: { boxID } });
-        },
-      },
-    };
+  
+  </script>
+
   </script>
 
 
