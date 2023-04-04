@@ -111,7 +111,7 @@
                   <div class="tab-content mt-3" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
-                      <form class="row gx-2 gy-2 align-items-center">
+                      <div class="row gx-2 gy-2 align-items-center">
                         <div class="col">
                           <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
                             <label class="visually-hidden" for="inputDelivery">Address</label>
@@ -122,9 +122,8 @@
                         <div class="d-grid gap-3 col-sm-auto">
                           <!-- <input class="form-control input-box form-foodwagon-control" id="location" type="text" placeholder="Address" v-model="customer_location" /> -->
                           <button @click="near_by2" class="btn btn-danger">Find Me</button>
-                          <!-- <button @click="near_by()" class="btn btn-danger" >Find Food</button> -->
                         </div>
-                      </form>
+                      </div>
 
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -138,7 +137,7 @@
                           </div>
                         </div>
                         <div class="d-grid gap-3 col-sm-auto">
-                          <button @click="findBox ()" class="btn btn-danger">Find Food</button>
+                          <button @click="near_by2" class="btn btn-danger">Find Me</button>
                         </div>
 
                       </form>
@@ -153,7 +152,7 @@
                           </div>
                         </div>
                         <div class="d-grid gap-3 col-sm-auto">
-                          <button @click="findRestaurant ()" class="btn btn-danger">Find Food</button>
+                          <button @click="near_by2" class="btn btn-danger">Find Me</button>
                         </div>
                       </form>
                     </div>
@@ -186,7 +185,7 @@
                   <div class="card card-span h-100 rounded-3"><img class="img-fluid rounded-3 h-100"
                       src="assets/img/gallery/mystery_image.jpg" alt="..." />
                     <div class="card-body ps-0">
-                      <h5 class="fw-bold text-1000 text-truncate mb-1">{{ box.postName }}</h5>
+                      <h5 class="fw-bold text-1000 text-truncate mb-1">{{ box.boxName }}</h5>
                       <div><span class="text-warning me-2"><i class="fas fa-map-marker-alt"></i></span><span
                           class="text-primary">{{ box.collectionTime }}</span></div>
                       <span class="text-1000 fw-bold">Price: $ {{ box.price }}</span>
@@ -196,14 +195,8 @@
                       <div class="text-1000 fw-bold "> Quantity:
                         <span class="text-1000 ">{{ box.quantity }}</span>
                       </div>
+                      <button @click="place_order(box.boXID)" type="button" class="btn btn-primary">Place Order</button>
                     </div>
-                  </div>
-                  <div class="d-grid gap-2">
-                    <template>
-                      <button @click="place_order(box.boXID)" type="button" class="btn btn-primary">Place
-                        Order</button>
-                    </template>
-                    
                   </div>
                 </div>
               </div>
@@ -452,9 +445,15 @@
   <!--  Vue-->
   <!-- ===============================================-->
   <script>
-    const nearby_URL = "http://localhost:5400/near_by";
-    const box_URL = "http://localhost:5000/box";
-    const rest_URL = "http://localhost:5300/restaurant";
+    // Straight to MS
+    // const nearby_URL = "http://localhost:5400/near_by";
+    // const box_URL = "http://localhost:5000/box";
+    // const rest_URL = "http://localhost:5300/restaurant";
+
+    // Through Konga
+    const nearby_URL = "http://localhost:8000/api/v1/near_by";
+    const box_URL = "http://localhost:8000/api/v1/box";
+    const rest_URL = "http://localhost:8000/api/v1/restaurant";
 
     function checkLogin() {
       if (localStorage.getItem('uid') == null) {
@@ -542,7 +541,7 @@
           description: "",
           quantity: "",
           boxes: [],
-          message: "There is a problem retrieving books data, please try again later.",
+          message: "There is a problem retrieving box data, please try again later.",
 
           //add box data
           newboxName: "",
@@ -564,9 +563,9 @@
 
       methods: {
 
-        // near_by3(){
-        //   console.log("yo")
-        // },
+        near_by3(){
+          console.log("yo")
+        },
 
         
 
@@ -585,11 +584,11 @@
             .then(response => response.json())
             .then(data => {
               console.log(response);
-              if (data.code === 400) {
+              if (data.code === 200) {
                 // no box in db
-                this.message = data.message;
-              } else {
                 this.boxes = data.data;
+              } else {
+                this.message = data.message;
               }
             })
             .catch(error => {
