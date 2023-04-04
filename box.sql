@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `box` (
   `price` decimal(10,0) NOT NULL,
   `description` varchar(64) DEFAULT NULL,
   `boxName` varchar(64) NOT NULL,
+  `postName` varchar(64) NOT NULL
   `postDate` date NOT NULL,
   PRIMARY KEY (`boxID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
