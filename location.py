@@ -137,4 +137,4 @@ def get_nearest_locations(latitude, longitude, locations):
     return nearest_locations
 
 if __name__ == '__main__':
-    app.run(port=5200, debug=True)
+    app.run(port=5200,host="0.0.0.0", debug=True)
