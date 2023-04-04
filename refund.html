@@ -24,23 +24,9 @@
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 <link href="vendor/fontawesome/css/all.css" rel="stylesheet">
 <link href="assets/css/login.css" rel="stylesheet">
+<link href="assets/css/refund.css" rel="stylesheet">
 <title>Refund </title>
-<style>
-    #content{
-    display: grid;
-    grid-template-columns: 50% 50%;
-    margin: 0 auto;
-    }
-    #refund {
-        margin: 47%;
-    }
-    table, th,td {
-      border: 1px solid black;
-    }
-    table {
-      width: 100%;
-    }
-</style>
+
 
 </head>
 
@@ -89,7 +75,7 @@
             <div class="card bg-secondary shadow border-0">
               <div class="card-header bg-transparent pb-5">
                 <div class="text-muted text-center mt-2 mb-3"><small>Making a refund for your order</small></div>
-                <table id="past_order">
+                <table id="app">
                   <tr>
                     <th>Post Name</th>
                     <th>Quantity</th>
@@ -100,22 +86,22 @@
                     <th></th>
                   </tr>
                   <tr v-for="order in past_orders">
-                    <td>{{ order.name }}</td>
-                    <td>{{ order.quantity }}</td>
-                    <td>{{ order.date }}</td>
-                    <td>{{ order.collected }}</td>
-                    <td>{{ order.bill }}</td>
-                    <td>{{ order.status }}</td>
-                    <td><button {{ refundable }}>Refund</button></td>
+                    <td></td>
+                    <td>{{ quantity }}</td>
+                    <td>{{ order_time }}</td>
+                    <td>{{}}</td>
+                    <td>{{ bill }}</td>
+                    <td>{{}}</td>
+                    <td><button {{}} class="btn">Refund</button></td>
                   </tr>
                   <tr>
                     <td>ABC</td>
-                    <td>2</td>
-                    <td>31/3/23</td>
+                    <td>3</td>
+                    <td>2020-06-12 02:14:55</td>
                     <td>21:45</td>
-                    <td>8.00</td>
+                    <td>9.00</td>
                     <td>Collected</td>
-                    <td><button>Refund</button></td>
+                    <td><button @click="cancel_order"class="btn">Refund</button></td>
                   </tr>
                   <tr>
                     <td>DEF</td>
@@ -124,7 +110,7 @@
                     <td>-</td>
                     <td>5.00</td>
                     <td>New</td>
-                    <td><button>Refund</button></td>
+                    <td><button class="btn">Refund</button></td>
                   </tr>
                   <tr>
                     <td>GHI</td>
@@ -133,7 +119,7 @@
                     <td>21:30</td>
                     <td>4.00</td>
                     <td>Collected</td>
-                    <td><button disabled>Refund</button></td>
+                    <td><button disabled class="btn"s>Refund</button></td>
                   </tr>
                   <tr>
                     <td>JKL</td>
@@ -142,7 +128,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>Refuned</td>
-                    <td><button disabled>Refund</button></td>
+                    <td><button disabled class="btn">Refund</button></td>
                   </tr>
                 </table>
 
@@ -217,13 +203,93 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <script>
-      const past_order = Vue.createApp({
-        data() {
+      const {
+        createApp
+      } = Vue
+
+      createApp({
+        data(){
           return {
-            past_orders:[]
+            past_orders:[],
+            order_url: "http://localhost:5001/order/customer",
+            customer_id:100,
+            quantity:0,
+            order_time:"2023-04-01",
+            bill:0,
+            order_id:0
+          }
+        },
+        methods: {
+          getPastOrders(){
+            const response = 
+            fetch(`${this.order_url}/${this.customer_id}`)
+            .then(response => response.json())
+            .then(data => {
+              console.log(response);
+              if (data.code===404){
+                console.log(data.message);
+              }else{
+                this.quantity = data.data.quantity;
+                this.order_time = data.data.created;
+                this.bill = data.data.total_bill;
+                this.order_id = data.data.order_id;
+              }
+            })
+            .catch(error => {
+              console.log(this.message + error);
+            });
+          },
+          cancel_order(){
+            const cancel_order_url="http://localhost:5500/cancel_order";
+            const orderID = 1;
+            fetch(`${cancel_order_url}/${orderID}`,{method:'POST'})
+            .then(response => response.json())
+            .then(data =>{
+              console.log(data.message)
+            })
+
+            
           }
         }
-      }).mount('#past_order')
+
+      }).mount('#app')
+
+      
+      //fetch('http://localhost:5001/orders')
+      //.then(response => response.text())
+      //.then(html => {
+        //const table = document.querySelector("#testing");
+        //table.insertAdjacentHTML('beforeend',html);
+      //})
+      //const testing= Vue.createApp({
+        //data() {
+          //return {
+            //past_orders:[],
+
+          //}
+        //},
+        //methods: {
+          //get_order(){
+            //fetch("http://localhost:5001/order/customer/100")
+            //.then(response => response.json())
+            //.then(data => {
+              //var orders = data.data.orders;
+              //var orderList = document.getElementById("order-list");
+              //orderList.innerHTML = "";
+              //for (var i = 0; i < orders.length; i++){
+                //var orderItem = document.createElement("li");
+                //orderItem.textContent = orders[i].order_id;
+                //orderList.appendChild(orderItem);
+              //}
+              //console.log(orders)
+            //})
+            //.catch(error =>{
+              //console.error(error);
+
+            //});
+          //}
+      //}
+    //}).mount('#app')
 
         
       
