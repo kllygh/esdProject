@@ -10,12 +10,13 @@ from invokes import invoke_http
 import pika
 import json
 import amqp_setup
+from os import environ
 
 app = Flask(__name__)
 CORS(app)
 
-orderURL = "http://localhost:5001/order"
-boxURL = "http://localhost:5000/box"
+orderURL = environ.get('order_URL')
+boxURL = environ.get('box_URL')
 
 ############# code added here #########################################################
 @app.route('/cancel_order/<OrderID>', methods=['POST'])

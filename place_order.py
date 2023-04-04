@@ -18,10 +18,9 @@ app = Flask(__name__)
 CORS(app)
 
 
-order_URL = environ.get('order_URL') or "http://127.0.0.1:5001/order"
-box_URL = environ.get('box_URL') or "http://127.0.0.1:5000/box"
-payment_URL = environ.get(
-    "payment_URL") or "http://127.0.0.1:6002/payment"
+order_URL = environ.get('order_URL') 
+box_URL = environ.get('box_URL') 
+payment_URL = environ.get("payment_URL")
 
 
 @app.route("/place_order", methods=['POST'])
@@ -125,7 +124,7 @@ def processPlaceOrder(order):
         return publish_error(message_inventory, inventory_result,
                              code_inventory, rabbit_msg)
 
-    # if order success
+    # if inventory is sufficient
     else:
         publish_activity(message_inventory, rabbit_msg)
 
