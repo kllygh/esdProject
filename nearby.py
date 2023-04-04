@@ -148,6 +148,7 @@ def processNearByLocation(customer_location):
             box_info.append(box)
     print("box_info",box_info)
 
+    box_info = box_info[:20]
     if box_info:
         return {
                 "code": 200,
