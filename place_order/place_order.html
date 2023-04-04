@@ -240,6 +240,17 @@
   <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script>
+    export default {
+        data() {
+          return {
+            boxID: null,
+          };
+        },
+        mounted() {
+          this.boxID = this.$route.query.boxID;
+        },
+      };
+
     const {
       createApp
     } = Vue
