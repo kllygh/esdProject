@@ -111,7 +111,7 @@
                   <div class="tab-content mt-3" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 
-                      <form class="row gx-2 gy-2 align-items-center">
+                      <div class="row gx-2 gy-2 align-items-center">
                         <div class="col">
                           <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
                             <label class="visually-hidden" for="inputDelivery">Address</label>
@@ -124,7 +124,7 @@
                           <button @click="near_by2" class="btn btn-danger">Find Me</button>
                           <!-- <button @click="near_by()" class="btn btn-danger" >Find Food</button> -->
                         </div>
-                      </form>
+                      </div>
 
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -179,6 +179,7 @@
 
 
 
+
             <div class="col-12" v-if="hasBoxes">
               <div class="row gx-3 h-30 align-items-center">
 
@@ -199,10 +200,12 @@
                     </div>
                   </div>
                   <div class="d-grid gap-2">
-                    <template>
-                      <button @click="place_order(box.boXID)" type="button" class="btn btn-primary">Place
-                        Order</button>
-                    </template>
+                    <div>
+                      <div>
+                        <button @click="place_order(box.boxID)" type="button" class="btn btn-primary">Place
+                          Order</button>
+                      </div>
+                      </div>
                     
                   </div>
                 </div>
@@ -211,6 +214,7 @@
 
             <div class="text-danger" v-if="!hasBoxes">
               {{ message }}
+            
             </div>
 
           </div>
@@ -725,60 +729,15 @@
             })
         },
 
-        // near_by(){
-        //   console.log("anything")
-        //   console.log(nearby_URL)
-        //   const response =
-        //         fetch(nearby_URL,
-        //         console.log(nearby_URL),
-        //               {
-        //                 method: "POST",
-        //                 headers: {
-        //                   "Content-type": "application/json"
-        //                 },
-        //                 body: JSON.stringify(
-        //                   {
-        //                     "customer_location": this.location
-        //                   }
-        //                 )
-        //               }
-        //               )
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 console.log(response);
-        //                 if (data.code === 404) {
-        //                     // no box in db
-        //                     this.message = data.message ;
-        //                 } 
-        //                 else {
-        //                     this.boxes = data.data.boxes;
-        //                 }
-        //             })
-        //             .catch(error => {
-        //                 // Errors when calling the service; such as network error, 
-        //                 // service offline, etc
-        //                 console.log(this.message + error);
-        //             });
+
         // },
-
-        near_by() {
-          console.log("anything")
-          // nearby_URL = ''
-          fetch(`${nearby_URL}/${customer_location}}`, {
-              method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-              console.log(data.message)
-            })
-
-
-        },
 
         // send boxID to place order
 
-        place_order(boxID) {
-          this.$router.push({ name: "place_order", query: { boxID } });
+        place_order(myData) {
+          myData = str(myData)
+          localStorage.setItem('myData', JSON.stringify(myData));
+          window.location.href = 'place_order/place_order.html'
         },
 
         // created () {

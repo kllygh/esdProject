@@ -268,8 +268,10 @@
         }
       },
 
-      mounted(){
-        this.boxID = this.$route.query.boxID
+      mounted(){  
+        const myData = JSON.parse(localStorage.getItem('myData'));
+        console.log(myData)
+        this.boxID = myData
       },
 
       computed: {
