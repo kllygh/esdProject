@@ -188,6 +188,7 @@ services:
     restart: always
     environment:
       dburl: mysql+mysqlconnector://is213@host.docker.internal:3306/restaurant
+      PYTHONUNBUFFERED: 1
     ports:
       - "5300:5300"
 
@@ -283,7 +284,7 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      order_URL: http://order:5001/order
+      order_URL: "http://order:5001/order"
       box_URL: "http://box:5000/box"
       payment_URL: "http://payment:6002/create-checkout-session"
       PYTHONUNBUFFERED: 1
@@ -310,7 +311,7 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      order_URL: http://order:5001/order
+      order_URL: "http://order:5001/order"
       box_URL: "http://box:5000/box"
       payment_URL: "http://payment:6002/create-checkout-session"
       PYTHONUNBUFFERED: 1

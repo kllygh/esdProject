@@ -6,12 +6,14 @@ from datetime import date
 
 import json
 import os
+from os import environ
 
 import amqp_setup
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/activity_log'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl') or 'mysql+mysqlconnector://root:root@localhost:3306/activity_log'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 
 ############ 1. Creation of the database #####################################################
@@ -64,8 +66,12 @@ def processError(errorMsg):
         print("--JSON:", error)
         newError = error['message'] #everyone need to change their MS to return message also!
 
-        db.session.add(newError)
-        db.session.commit()
+        # db.session.add(newError)
+        # db.session.commit()
+        with app.app_context():
+            eLog = Logs(error_details=newError)
+            db.session.add(eLog)
+            db.session.commit()
 
         #should be like this
         # {
