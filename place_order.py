@@ -121,7 +121,6 @@ def processPlaceOrder(order):
 
     if code_inventory not in range(200, 300):
         # publish to error
-
         return publish_error(message_inventory, inventory_result,
                              code_inventory, rabbit_msg)
 

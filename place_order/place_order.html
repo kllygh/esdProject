@@ -110,7 +110,7 @@
             <div><img src="../assets/img/gallery/mystery_image.jpg" width="100%" height="auto" /></div>
             <div id="app">
               <a style="font-weight:bold; font-size:23px;" id="Name">Name: </a> <a style="font-size:20px;">
-                {{postName}}</a><br>
+                {{boxName}}</a><br>
 
               <a style="font-weight:bold; font-size:23px;" id="Restaurent">Restaurant: </a><a style="font-size:20px;">
                 {{ restaurant }}</a><br>
@@ -182,6 +182,10 @@
     }
     console.log(localStorage.getItem('uid'))
     // constant for account login
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const boxID = urlParams.get('boxID');
   </script>
 
 
@@ -250,10 +254,10 @@
           restaurant: "Subway",
           // NOTE would this be the RESTAURANT NAME or the BOX NAME?
           // are both coordinated as well
-          postName: "",
+          boxName: "",
           location: "",
           collectionTime: "2023-03-26 21:43:02",
-          boxID: null, // NOTE need to generate from ui
+          boxID: boxID, // NOTE need to generate from ui
           customerID: 'abc100',
           // need help with getting this customer ID from local= storage somehow its null
           quantity: 1,
@@ -263,13 +267,8 @@
           box_url: "http://127.0.0.1:5000/box",
           restaurant_url: "http://127.0.0.1:5300/restaurant",
           paymentMessage: "",
+          place_order_URL: "http://127.0.0.1:5111/place_order"
         }
-      },
-
-      mounted() {
-        const myData = JSON.parse(localStorage.getItem('myData'));
-        console.log(myData)
-        this.boxID = myData
       },
 
       computed: {
@@ -295,7 +294,7 @@
                 this.restaurantID = data.data.restaurant_id;
                 this.collectionTime = data.data.collectionTime;
                 this.inventory = data.data.quantity;
-                this.postName = data.data.postName;
+                this.boxName = data.data.boxName;
                 this.getRestaurantInfo()
 
               }
@@ -342,7 +341,7 @@
           console.log("submitted please");
           console.log(this.customerID);
 
-          await fetch(place_order_URL, {
+          await fetch(this.place_order_URL, {
               method: "POST",
               headers: {
                 "Content-type": "application/json"
@@ -422,6 +421,11 @@
       },
       created() {
         this.getBoxInfo();
+      },
+      mounted() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        this.boxID = urlParams.get('boxID');
       }
     }).mount('#app')
   </script>
