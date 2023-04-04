@@ -19,7 +19,6 @@ class Box(db.Model):
     __tablename__ = 'box'
 
     boxID = db.Column(db.Integer, primary_key=True)
-    boxName = db.Column(db.String(30), nullable=False)
     restaurant_id = db.Column(db.Integer, nullable=False)
     cust_id = db.Column(db.Integer, nullable=False)
     postTime = db.Column(db.DateTime, nullable=False)
@@ -27,12 +26,11 @@ class Box(db.Model):
     collectionTime = db.Column(db.DateTime, nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
     description = db.Column(db.String(64), nullable=False)
-    postName = db.Column(db.String(30), nullable=False)
+    boxName = db.Column(db.String(30), nullable=False)
     postDate = db.Column(db.Date, nullable=False)
 
-    def __intit__(self, boxID, boxName, restaurant_id, cust_id, postTime, quantity, collectionTime, price, description, postName, postDate):
+    def __intit__(self, boxID, restaurant_id, cust_id, postTime, quantity, collectionTime, price, description, boxName, postDate):
         self.boxID = boxID
-        self.boxName = boxName
         self.restaurant_id = restaurant_id
         self.cust_id = cust_id
         self.postTime = postTime
@@ -40,12 +38,11 @@ class Box(db.Model):
         self.collectionTime = collectionTime
         self.price = price
         self.description = description
-        self.postName = postName
+        self.boxName = boxName
         self.postDate = postDate
 
     def json(self):
         return {"boxID": self.boxID,
-                "boxName": self.boxName,
                 "restaurant_id": self.restaurant_id,
                 "cust_id": self.cust_id,
                 "postTime": self.postTime,
@@ -53,7 +50,7 @@ class Box(db.Model):
                 "collectionTime": self.collectionTime,
                 "price": self.price,
                 "description": self.description,
-                "postName": self.postName,
+                "boxName": self.boxName,
                 "postDate": self.postDate
                 }
 
