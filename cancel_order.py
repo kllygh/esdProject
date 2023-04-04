@@ -84,7 +84,7 @@ def CancelOrder(OrderID):
 
 def ProcessCancelOrder(orderDetails):
     #update inventory
-    print('\n\n--------3. Start Update Inventory--------')
+    print('\n\n--------3. Start Update Box Inventory--------')
     quantity = orderDetails["quantity"]
     boxID = str(orderDetails["boxID"])
     box = invoke_http(boxURL + '/' + boxID)
@@ -116,7 +116,7 @@ def ProcessCancelOrder(orderDetails):
         }
     routing_key = 'updateInventory.info' 
     updateActivityandError(code, message, box, routing_key)
-    print('\n\n--------4. End update Inventory--------')
+    print('\n\n--------4. End update Box Inventory--------')
 
     #start refunding
     global phoneNo
