@@ -1,11 +1,13 @@
 from twilio.rest import Client
 import json
-import os
+from os import environ
 import amqp_setup
 
-account_sid = 'ACbfbac2a50236d5cb185770835367f26a'
-auth_token = 'f7a22749373aeffa15d01a09436fe2ba'
-msg_service_sid = 'MGb72ae56ef4f33be32fc35e4be263a85a'
+
+account_sid = environ.get('account_sid') 
+auth_token = environ.get('auth_token')
+msg_service_sid = environ.get('msg_service_sid')
+
 client = Client(account_sid, auth_token)
 
 monitorBindingKey='#.notify'
@@ -43,7 +45,6 @@ def callback(channel, method, properties, body):
         val = arr[key[0]]
         phoneNo = val[0]
         refAmt = val[1]
-        refID = val[2]
         refundCompleted(phoneNo, refAmt)
     print() # print a new line feed
 
