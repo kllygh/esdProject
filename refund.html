@@ -1,141 +1,118 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!--    Favicons-->
-<!-- ===============================================-->
-<link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png">
-<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicons/favicon.ico">
-<link rel="manifest" href="assets/img/favicons/manifest.json">
-<meta name="msapplication-TileImage" content="assets/img/favicons/mstile-150x150.png">
-<meta name="theme-color" content="#ffffff">
+  <!--    Favicons-->
+  <!-- ===============================================-->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png">
+  <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicons/favicon.ico">
+  <link rel="manifest" href="assets/img/favicons/manifest.json">
+  <meta name="msapplication-TileImage" content="assets/img/favicons/mstile-150x150.png">
+  <meta name="theme-color" content="#ffffff">
 
-<!-- ===============================================-->
-<!--    Stylesheets-->
-<!-- ===============================================-->
-<link href="assets/css/theme.css" rel="stylesheet" />
+  <!-- ===============================================-->
+  <!--    Stylesheets-->
+  <!-- ===============================================-->
+  <link href="assets/css/theme.css" rel="stylesheet" />
 
-<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css"
-    crossorigin="anonymous">
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<link href="vendor/fontawesome/css/all.css" rel="stylesheet">
-<link href="assets/css/login.css" rel="stylesheet">
-<link href="assets/css/refund.css" rel="stylesheet">
-<title>Refund </title>
+  <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" crossorigin="anonymous">
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="vendor/fontawesome/css/all.css" rel="stylesheet">
+  <link href="assets/css/login.css" rel="stylesheet">
+  <link href="assets/css/refund.css" rel="stylesheet">
+  <title>Refund </title>
 
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.js"></script>
 
 </head>
 
-<!-- <body onload="checkLogin()" class="bg-default"> -->
+<body class="bg-default">
 
-<!-------------------------------------------------------------- NAVBAR ---------------------------------------------------->
+  <!-------------------------------------------------------------- NAVBAR ---------------------------------------------------->
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" data-navbar-on-scroll="data-navbar-on-scroll">
-    <div class="container"><a class="navbar-brand d-inline-flex" href="index.html"><h2 class="text-1000 fs-3 fw-bold ms-2 text-gradient">Mystery Food Box</h2></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
+    <div class="container"><a class="navbar-brand d-inline-flex" href="index.html">
+        <h2 class="text-1000 fs-3 fw-bold ms-2 text-gradient">Mystery Food Box</h2>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+          class="navbar-toggler-icon"> </span></button>
       <div class="collapse navbar-collapse border-top border-lg-0 my-2 mt-lg-0" id="navbarSupportedContent">
         <div class="mx-auto pt-5 pt-lg-0 d-block d-lg-none d-xl-block">
-          <p class="mb-0 fw-bold text-lg-center">Deliver to: <i class="fas fa-map-marker-alt text-warning mx-2"></i><span class="fw-normal">Current Location </span><span>Mirpur 1 Bus Stand, Dhaka</span></p>
+          <p class="mb-0 fw-bold text-lg-center">Deliver to: <i
+              class="fas fa-map-marker-alt text-warning mx-2"></i><span class="fw-normal">Current Location
+            </span><span>Mirpur 1 Bus Stand, Dhaka</span></p>
         </div>
         <form class="d-flex mt-4 mt-lg-0 ms-lg-auto ms-xl-0">
-          <div class="input-group-icon pe-2" style="height: 20%;"><i class="fas fa-search input-box-icon text-primary"></i>
-            <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food" aria-label="Search" />
+          <div class="input-group-icon pe-2" style="height: 20%;"><i
+              class="fas fa-search input-box-icon text-primary"></i>
+            <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food"
+              aria-label="Search" />
           </div>
           <div class="input-group-icon pe-2">
-            <button class="btn btn-white shadow-warning text-warning" type="submit"><i class="fas fa-user me-2"></i>Profile</button>
+            <button class="btn btn-white shadow-warning text-warning" type="submit"><i
+                class="fas fa-user me-2"></i>Profile</button>
           </div>
           <div class="input-group-icon pe-2">
-            <button class="btn btn-white shadow-warning text-warning" type="submit"> 
+            <button class="btn btn-white shadow-warning text-warning" type="submit">
               <a id="logout" style="cursor: pointer;"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
             </button>
           </div>
         </form>
       </div>
     </div>
-  </nav>  
+  </nav>
 
-    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"> -->
-<!-- <body class="bg-default"> -->
-    <div class="main-content">
-        <div class="header bg-gradient-primary py-7 py-lg-8">
-            <div class="container">
-                <div class="header-body text-center mb-7">
-                  <div class="row justify-content-center">
-                    <div class="col-lg-5 col-md-6">
-                      <h1 class="text-white">Mystery Food Box</h1>
-                    </div>
-                  </div>
-                </div>
+  <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"> -->
+  <!-- <body class="bg-default"> -->
+  <div class="main-content">
+    <div class="header bg-gradient-primary py-7 py-lg-8">
+      <div class="container">
+        <div class="header-body text-center mb-7">
+          <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6">
+              <h1 class="text-white">Mystery Food Box</h1>
             </div>
+          </div>
         </div>
-        <div class="mt--8 pb-5">
-            <div class="card bg-secondary shadow border-0">
-              <div class="card-header bg-transparent pb-5">
-                <div class="text-muted text-center mt-2 mb-3"><small>Making a refund for your order</small></div>
-                <table id="app">
-                  <tr>
-                    <th>Post Name</th>
-                    <th>Quantity</th>
-                    <th>Date ordered</th>
-                    <th>Time collected</th>
-                    <th>Total bill</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                  <tr v-for="order in past_orders">
-                    <td></td>
-                    <td>{{ quantity }}</td>
-                    <td>{{ order_time }}</td>
-                    <td>{{}}</td>
-                    <td>{{ bill }}</td>
-                    <td>{{}}</td>
-                    <td><button {{}} class="btn">Refund</button></td>
-                  </tr>
-                  <tr>
-                    <td>ABC</td>
-                    <td>3</td>
-                    <td>2020-06-12 02:14:55</td>
-                    <td>21:45</td>
-                    <td>9.00</td>
-                    <td>Collected</td>
-                    <td><button @click="cancel_order"class="btn">Refund</button></td>
-                  </tr>
-                  <tr>
-                    <td>DEF</td>
-                    <td>1</td>
-                    <td>31/3/23</td>
-                    <td>-</td>
-                    <td>5.00</td>
-                    <td>New</td>
-                    <td><button class="btn">Refund</button></td>
-                  </tr>
-                  <tr>
-                    <td>GHI</td>
-                    <td>1</td>
-                    <td>28/3/23</td>
-                    <td>21:30</td>
-                    <td>4.00</td>
-                    <td>Collected</td>
-                    <td><button disabled class="btn"s>Refund</button></td>
-                  </tr>
-                  <tr>
-                    <td>JKL</td>
-                    <td>1</td>
-                    <td>23/3/23</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>Refuned</td>
-                    <td><button disabled class="btn">Refund</button></td>
-                  </tr>
-                </table>
-
+      </div>
     </div>
+    <div class="mt--8 pb-5">
+      <div class="card bg-secondary shadow border-0">
+        <div class="card-header bg-transparent pb-5">
+          <div class="text-muted text-center mt-2 mb-3"><small>Making a refund for your order</small></div>
+          <table id="app">
+            <tr>
+              <th>Post Name</th>
+              <th>Quantity</th>
+              <th>Date ordered</th>
+              <th>Time collected</th>
+              <th>Total bill</th>
+              <th>Status</th>
+            </tr>
+            <template>
+              <tr v-for="order in past_orders">
+                <!-- Call Box ms to return postname base on boxid -->
+                <td>{{ get_boxName(order) }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.created }}</td>
+                <td>{{ order.bill }}</td>
+                <td>{{ order.status }}</td>
+                <td><button @click="cancel_order" :disabled="isDisabled" class="btn">Refund</button></td>
+                <!--Need to do a v-if here for disabling button-->
+              </tr>
+            </template>
+          </table>
 
-    <!---------------------------------------- FIREBASE -------------------------------------------->
-    <!-- <script>
+        </div>
+
+        <!---------------------------------------- FIREBASE -------------------------------------------->
+        <!-- <script>
       function checkLogin() {
         if (localStorage.getItem('uid') == null) {
           window.location.href = 'login.html';
@@ -146,12 +123,12 @@
     </script> -->
 
 
-    <!---------------------------------------- FIREBASE FOR LOGOUT -------------------------------------------->
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-firestore-compat.js"></script>
-    <script type="module"> 
-    
-    // ----------------------------------------------------LOGOUT-----------------------------------------------//
+        <!---------------------------------------- FIREBASE FOR LOGOUT -------------------------------------------->
+        <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-firestore-compat.js"></script>
+        <script type="module">
+
+          // ----------------------------------------------------LOGOUT-----------------------------------------------//
       // Import the functions you need from the SDKs you need
       import {initializeApp} from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
       import {
@@ -198,118 +175,141 @@
             });
         });
     </script>
-    <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
+        <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
 
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-    <script>
-      const {
-        createApp
-      } = Vue
+        <script>
+          // const {
+          //   createApp
+          // } = Vue 
+          // import Vue from 'vue'
 
-      createApp({
-        data(){
-          return {
-            past_orders:[],
-            order_url: "http://localhost:5001/order/customer",
-            customer_id:100,
-            quantity:0,
-            order_time:"2023-04-01",
-            bill:0,
-            order_id:0
-          }
-        },
-        methods: {
-          getPastOrders(){
-            const response = 
-            fetch(`${this.order_url}/${this.customer_id}`)
-            .then(response => response.json())
-            .then(data => {
-              console.log(response);
-              if (data.code===404){
-                console.log(data.message);
-              }else{
-                this.quantity = data.data.quantity;
-                this.order_time = data.data.created;
-                this.bill = data.data.total_bill;
-                this.order_id = data.data.order_id;
+          const app = Vue.createApp({
+            data() {
+              return {
+                past_orders: [],
+                order_url: "http://127.0.0.1:5001/order/customer",
+                customer_id: "abc100",
+                quantity: 0,
+                order_time: "2023-04-01",
+                bill: 0,
+                order_id: 0
               }
-            })
-            .catch(error => {
-              console.log(this.message + error);
-            });
-          },
-          cancel_order(){
-            const cancel_order_url="http://localhost:5500/cancel_order";
-            const orderID = 1;
-            fetch(`${cancel_order_url}/${orderID}`,{method:'POST'})
-            .then(response => response.json())
-            .then(data =>{
-              console.log(data.message)
-            })
+            },
+            methods: {
+              cancel_order() {
+                const cancel_order_url = "http://localhost:5500/cancel_order";
+                const orderID = 1;
+                fetch(`${cancel_order_url}/${orderID}`, {
+                    method: 'POST'
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log(data.message)
+                  })
+              },
+              get_boxName(order) {
+                let boxID = order.boxID
+                const box_url = "http://localhost:8000/api/v1/box";
+                fetch(`${box_url}/${boxID}`, {
+                    method: 'GET'
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log(data.message)
+                    console.log(data.data)
+                    let boxName = data.data.boxName
+                    console.log(boxName)
+                    return boxName
+                  })
+              },
+              getPastOrders() {
+                const response =
+                  fetch(`${this.order_url}/${this.customer_id}`)
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                      console.log(data.message);
+                    } else {
+                      this.past_orders = data.data.orders;
+                    }
+                  })
+                  .catch(error => {
+                    console.log(this.message + error);
+                  });
+              }
+            },
+            created() {
+              this.getPastOrders()
+            },
+            computed: {
+              isDisabled() {
+                // Need to check
+              },
+              computedValues() {
+                return this.past_orders.map((order) => this.get_boxName(order))
+              }
+            }
 
-            
-          }
-        }
+          }).mount('#app')
 
-      }).mount('#app')
 
-      
-      //fetch('http://localhost:5001/orders')
-      //.then(response => response.text())
-      //.then(html => {
-        //const table = document.querySelector("#testing");
-        //table.insertAdjacentHTML('beforeend',html);
-      //})
-      //const testing= Vue.createApp({
-        //data() {
+          //fetch('http://localhost:5001/orders')
+          //.then(response => response.text())
+          //.then(html => {
+          //const table = document.querySelector("#testing");
+          //table.insertAdjacentHTML('beforeend',html);
+          //})
+          //const testing= Vue.createApp({
+          //data() {
           //return {
-            //past_orders:[],
+          //past_orders:[],
 
           //}
-        //},
-        //methods: {
+          //},
+          //methods: {
           //get_order(){
-            //fetch("http://localhost:5001/order/customer/100")
-            //.then(response => response.json())
-            //.then(data => {
-              //var orders = data.data.orders;
-              //var orderList = document.getElementById("order-list");
-              //orderList.innerHTML = "";
-              //for (var i = 0; i < orders.length; i++){
-                //var orderItem = document.createElement("li");
-                //orderItem.textContent = orders[i].order_id;
-                //orderList.appendChild(orderItem);
-              //}
-              //console.log(orders)
-            //})
-            //.catch(error =>{
-              //console.error(error);
-
-            //});
+          //fetch("http://localhost:5001/order/customer/100")
+          //.then(response => response.json())
+          //.then(data => {
+          //var orders = data.data.orders;
+          //var orderList = document.getElementById("order-list");
+          //orderList.innerHTML = "";
+          //for (var i = 0; i < orders.length; i++){
+          //var orderItem = document.createElement("li");
+          //orderItem.textContent = orders[i].order_id;
+          //orderList.appendChild(orderItem);
           //}
-      //}
-    //}).mount('#app')
+          //console.log(orders)
+          //})
+          //.catch(error =>{
+          //console.error(error);
 
-        
-      
-    </script>
+          //});
+          //}
+          //}
+          //}).mount('#app')
+        </script>
 
-    <!-- ===============================================-->
-    <!--    JavaScripts-->
-    <!-- ===============================================-->
-    <script src="vendors/@popperjs/popper.min.js"></script>
-    <script src="vendors/bootstrap/bootstrap.min.js"></script>
-    <script src="vendors/is/is.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
-    <script src="vendors/fontawesome/all.min.js"></script>
-    <script src="assets/js/theme.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js'
-        integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM'
-        crossorigin='anonymous'></script>
+        <!-- ===============================================-->
+        <!--    JavaScripts-->
+        <!-- ===============================================-->
+        <script src="vendors/@popperjs/popper.min.js"></script>
+        <script src="vendors/bootstrap/bootstrap.min.js"></script>
+        <script src="vendors/is/is.min.js"></script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+        <script src="vendors/fontawesome/all.min.js"></script>
+        <script src="assets/js/theme.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js'
+          integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM' crossorigin='anonymous'>
+        </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&amp;display=swap" rel="stylesheet">
+        <link
+          href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&amp;display=swap"
+          rel="stylesheet">
 
 
 </body>
+
 </html>
