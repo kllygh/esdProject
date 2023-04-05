@@ -6,7 +6,7 @@ Mystery Food Box hopes to manage food waste and increase the ease of food recycl
 
 
 ## User Scenarios
-Customer logs in via Google Provider and searches for the nearest restaurants selling food boxes
+Customer logs in via Google Provider and searches for the 20 nearest restaurants selling food boxes
 Customer places an order and conducts payment
 Customer cancels an order and receives a refund
 
