@@ -35,7 +35,7 @@ def place_order():
             result = processPlaceOrder(order)
             print("\n------------------------------------")
             print("\nresult:", result)
-            return jsonify(result), result["code"]
+            return jsonify(result)
 
         except Exception as e:
             # Unexpected error in code
