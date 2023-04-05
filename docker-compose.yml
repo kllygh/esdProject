@@ -234,8 +234,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
-      stripePublicKey: 'pk_test_51MmYEkAZMKLMwhgSfZEJ2itVnibnF9zIb9wJnZlLcTE90hQXj79tC4NivjjLU6Vf5KTiEsYMzDyz8lhg7GGebL8K007UA4ZmhZ'
-      stripeSecretKey: 'sk_test_51MmYEkAZMKLMwhgSYhgnvpoB7BqKKNyORw03IaAtnyMJA5z3AFprqqBFJAwbv9SiN9lGtzYKhKk5M5qRU61Mlte000GF44rQT9'
+      stripePublicKey: "pk_test_51Mmaq9Kcs6la72jh1ZMbbP5wP4yd0wbYZ43d1aDu09CDagPhLEet12Mcho1Nm2gApRmaPt8CCHrrFpWNsKb3h6De00PYaYjnbP"
+      stripeSecretKey: "sk_test_51Mmaq9Kcs6la72jh0v2KAFQGvOWzqEVksC3hLHdDwf7UfuTRLxS62UVBJFxdZfnvGHcWLVmSuHLypH5kyHWGaQuy00wKtjTYqW"
 
 ############################################ Invocation based's Microservices (Complex MS) #################################################
 

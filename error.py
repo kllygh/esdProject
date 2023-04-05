@@ -11,7 +11,8 @@ from os import environ
 import amqp_setup
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl') or 'mysql+mysqlconnector://root:root@localhost:3306/activity_log'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get(
+    'dburl') or 'mysql+mysqlconnector://root:root@localhost:3306/activity_log'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 ############ 1. Creation of the database #####################################################
 db = SQLAlchemy(app)
 CORS(app)
+
 
 class Logs(db.Model):
     __tablename__ = 'error'
@@ -41,15 +43,18 @@ class Logs(db.Model):
 
 ############ 2. Receiving the data from the queue #####################################################
 
-monitorBindingKey='*.error'
+monitorBindingKey = '*.error'
+
 
 def receiveError():
     amqp_setup.check_setup()
-    
-    queue_name = "Error"  
 
-    amqp_setup.channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
+    queue_name = "Error"
+
+    amqp_setup.channel.basic_consume(
+        queue=queue_name, on_message_callback=callback, auto_ack=True)
     amqp_setup.channel.start_consuming()
+
 
 def callback(channel, method, properties, body):
     print("\nReceived an error by " + __file__)
@@ -64,7 +69,8 @@ def processError(errorMsg):
     try:
         error = json.loads(errorMsg)
         print("--JSON:", error)
-        newError = error['message'] #everyone need to change their MS to return message also!
+        # everyone need to change their MS to return message also!
+        newError = error['message']
 
         # db.session.add(newError)
         # db.session.commit()
@@ -73,7 +79,7 @@ def processError(errorMsg):
             db.session.add(eLog)
             db.session.commit()
 
-        #should be like this
+        # should be like this
         # {
         #     "code": 404,
         #     "data": {
@@ -87,7 +93,9 @@ def processError(errorMsg):
         print("--DATA:", errorMsg)
     print()
 
-if __name__ == "__main__":   
+
+if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
-    print(": monitoring routing key '{}' in exchange '{}' ...".format(monitorBindingKey, amqp_setup.exchangename))
+    print(": monitoring routing key '{}' in exchange '{}' ...".format(
+        monitorBindingKey, amqp_setup.exchangename))
     receiveError()

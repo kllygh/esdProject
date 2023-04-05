@@ -10,54 +10,47 @@ import pika
 # app = Flask(__name__)
 
 # get them
-stripeSecretKey = os.environ.get("stripeSecretKey")
-stripePublicKey = os.environ.get("stripePublicKey")
+stripeSecretKey = os.environ.get(
+    "stripeSecretKey") or "sk_test_51Mmaq9Kcs6la72jh0v2KAFQGvOWzqEVksC3hLHdDwf7UfuTRLxS62UVBJFxdZfnvGHcWLVmSuHLypH5kyHWGaQuy00wKtjTYqW"
+stripePublicKey = os.environ.get(
+    "stripePublicKey") or "pk_test_51Mmaq9Kcs6la72jh1ZMbbP5wP4yd0wbYZ43d1aDu09CDagPhLEet12Mcho1Nm2gApRmaPt8CCHrrFpWNsKb3h6De00PYaYjnbP"
 stripe.api_key = stripeSecretKey
-stripe.api_key = stripeSecretKey
+# stripe.api_key = stripeSecretKey
 
 monitorBindingKey = '#.refund'
 
+
 def requestRefund():
     amqp_setup.check_setup()
-        
-    queue_name = 'Refund' #can change later
-    
+
+    queue_name = 'Refund'  # can change later
+
     # set up a consumer and start to wait for coming messages
-    amqp_setup.channel.basic_consume(queue=queue_name, on_message_callback=on_request, auto_ack=True)
+    amqp_setup.channel.basic_consume(
+        queue=queue_name, on_message_callback=callback, auto_ack=True)
     amqp_setup.channel.start_consuming()
 
-def on_request(channel, method, properties, body):
+
+def callback(channel, method, properties, body):
     print("\nReceived a request to notify customer by " + __file__)
     print('\n--------------TEST 1 PASSED----------------')
-    arr = json.loads(body) 
+    arr = json.loads(body)
     print(arr)
 
     val = arr['refund_details']
     ref_json = initiate_refund(val[0], val[1])
     ref = json.dumps(ref_json)
-    print('\n--------------TEST 2 PASSED----------------')
-
-    amqp_setup.check_setup()
-    if channel.is_open:
-        print('\n--------------CHANNEL OPEN, INITIATING RETURN MESSAGE----------------')
-        amqp_setup.channel.basic_publish(
-            exchange=amqp_setup.exchangename, #assume we using the same exchange as the others
-            routing_key=properties.reply_to, #need to be declared in cancel an order MS
-            properties=pika.BasicProperties(correlation_id=properties.correlation_id),
-            body=ref
-                        )
-        print("Message sent.") # print a new line feed
-    else:
-        print("Channel not open, unable to send message.")
 
 
 def initiate_refund(chargeID, amt):
     print('\n\n--------Start Refund--------')
 
+    amqp_setup.check_setup()
+
     amt = int(amt*100)
     refund = stripe.Refund.create(
-        payment_intent = chargeID,
-        amount = amt #amount refunded in cents, MUST BE INT NOT FLOAT
+        payment_intent=chargeID,
+        amount=amt  # amount refunded in cents, MUST BE INT NOT FLOAT
     )
     print('\n\n--------End Refund--------')
     if refund.status == 'succeeded':
@@ -70,7 +63,10 @@ def initiate_refund(chargeID, amt):
         "status": refund.status
     }
 
-if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
+
+# execute this program only if it is run as a script (not by 'import')
+if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
-    print(": monitoring routing key '{}' in exchange '{}' ...".format(monitorBindingKey, amqp_setup.exchangename))
+    print(": monitoring routing key '{}' in exchange '{}' ...".format(
+        monitorBindingKey, amqp_setup.exchangename))
     requestRefund()
