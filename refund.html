@@ -196,6 +196,7 @@
           //   createApp
           // } = Vue 
           // import Vue from 'vue'
+      
 
           const app = Vue.createApp({
             data() {
@@ -307,6 +308,12 @@
 
           }).mount('#app')
 
+          // disabling button after click
+          const button = document.querySelector('button');
+
+          button.addEventListener('click', function() {
+            this.disabled = true;
+          });
 
           //fetch('http://localhost:5001/orders')
           //.then(response => response.text())
