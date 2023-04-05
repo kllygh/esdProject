@@ -42,7 +42,7 @@ def callback(channel, method, properties, body):
         phoneNo = val[0]
         refAmt = val[1]
         refID = val[2]
-        refundCompleted(phoneNo, refAmt, refID)
+        refundCompleted(phoneNo, refAmt)
     print() # print a new line feed
 
 #order confirmation function
@@ -87,14 +87,13 @@ def transactionCompleted(phoneNo, transAmt, transID):
     print(message.sid)
 
 #transaction refunded function
-def refundCompleted(phoneNo, refAmt, refID):
+def refundCompleted(phoneNo, refAmt):
     # phoneNum = '+6590907461' 
     # refundAmount = str(10.00)
     # refundID = 'test_transactionID'
     phoneNum = phoneNo 
     refundAmount = refAmt
-    refundID = refID
-    msgbody = 'Successful refund of $' + refundAmount + ' made. Refund ID is ' + refundID + '.'
+    msgbody = 'Successful refund of $' + refundAmount + ' made.'
     
     message = client.messages.create(  
                                     messaging_service_sid = msg_service_sid, 
