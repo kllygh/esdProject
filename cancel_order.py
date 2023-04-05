@@ -60,25 +60,30 @@ def CancelOrder():
         updateActivityandError(code, activity, order, routing_key)
 
         print('\n\n--------2. Sending to ProcessCancelOrder--------')
-        result = ProcessCancelOrder(order['data'])
-        print('\nresult: ', result)
-        print('\n\n--------7. End ProcessCancelOrder--------')
+        ProcessCancelOrder(order['data'])
+        print('\n\n--------8. End ProcessCancelOrder--------')
 
-        try:
-            print('\n\n--------8. Send to update_order_status--------')
-            status = refundDetails['status']
-            result = update_order_status(status)
-            print('\n\n----------9. End update_order_status----------')
-            return jsonify(result), result["code"]
-        except:
-            result = {
-                "code": 500,
-                "data": {
-                    "status": "Failed"
-                },
-                "message": "Order refundID unable to be updated."
-            }
-            return jsonify(result), result["code"]
+        return {
+        "code": 200,
+        "data": {"cancel_order_result": order, "status": "Success"},
+        "message": "Cancel Order success."
+        }
+
+        # try:
+        #     print('\n\n--------8. Send to update_order_status--------')
+        #     status = refundDetails['status']
+        #     result = update_order_status(status)
+        #     print('\n\n----------9. End update_order_status----------')
+        #     return jsonify(result), result["code"]
+        # except:
+        #     result = {
+        #         "code": 500,
+        #         "data": {
+        #             "status": "Failed"
+        #         },
+        #         "message": "Order refundID unable to be updated."
+        #     }
+        #     return jsonify(result), result["code"]
 
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -130,113 +135,39 @@ def ProcessCancelOrder(orderDetails):
     # start refunding
     global phoneNo
     global amount
+    orderID = orderDetails["order_id"]
     chargeID = orderDetails["charge_id"]
     amount = str(orderDetails["total_bill"])  # is string
     phoneNo = '+65' + str(orderDetails["customer_number"])
-    print('\n\n--------5. Send to refund.py--------')
-    startRefund(chargeID, amount)
-    print('\n\n--------6. Exit refund.py--------')
-    if refundDetails['status'] == 'succeeded':
-        return {
-            "code": 201,
-            "data": {
-                "status": "Success"
-            },
-            "message": "Order successfully refunded."
-        }
-    return {
-        "code": 500,
-        "data": {
-            "status": "Failed"
-        },
-        "message": "Order unable to be refunded. Please try again."
-    }
+    print('\n\n----------------------5. Send to refund.py----------------------')
+    startRefund(chargeID, amount, orderID)
 
+    print('\n\n----------------------6. Send notification----------------------')
+    msg = json.dumps({
+        "refundDetails": [phoneNo, amount]
+    })
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key='refund.notify',
+                                        body=msg, properties=pika.BasicProperties(delivery_mode=2))
+    print('\n\n----------------------7. Notification sent----------------------')
 
-def update_order_status(refund_status):
-    # update order
-    if refund_status == 'succeeded':
-        print('\n\n--------Start Update Order--------')
-        refID = refundDetails['refund_id']
-        order_update = {"status": "REFUNDED", "refund_id": refID}
-        order = invoke_http(orderURL + '/update/' +
-                            str(orderID), method='PUT', json=order_update)
-        print('\n\n--------End Update Order--------')
-        print(order)
-        code = order["code"]
-        message = json.dumps(order)
-        if code not in range(200, 300):
-            routing_key = 'updateOrder.error'
-            updateActivityandError(code, message, order, routing_key)
-            return {
-                "code": 500,
-                "data": {"status": "Failed"},
-                "message": "Order refund unsuccessful."
-            }
-        routing_key = 'updateOrder.info'
-        updateActivityandError(code, message, order, routing_key)
-        amqp_setup.channel.close()
-        return {
-            "code": 200,
-            "data": {
-                "cancel_order_result": order['data'],
-                "status": "Success"
-            },
-            "message": "Order successfully refunded."
-        }
-    else:
-        return {
-            "code": 500,
-            "data": {"cancel_order_result": None},
-            "message": "Error processing refund."
-        }
-
-
-# step6-7
-
-
-def startRefund(chargeID, Amt):
-    print('\n\n--------Start Refund--------')
+def startRefund(chargeID, Amt, orderID):
+    print('\n\n--------StartRefund Function called--------')
     amqp_setup.check_setup()
     amount = float(Amt)
     msg = f"""
     {{
-        "refund_details": ["{chargeID}", {amount:.2f}]
+        "refund_details": ["{chargeID}", {amount:.2f}],
+        "order_id": {orderID}
     }}
     """  # stringify JSON
 
-    callback_queue = 'Refund_Reply'
     # Send a message with reply-to header under properties
     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename,
                                      routing_key='refund.refund',
-                                     properties=pika.BasicProperties(
-                                         reply_to='refund.reply', delivery_mode=2),
+                                     properties=pika.BasicProperties(delivery_mode=2),
                                      body=msg)  # body need to include chargeID and amount, send as "{'refund_details': [chargeID, Amt]}"
-
-    amqp_setup.channel.basic_consume(queue=callback_queue,
-                                     on_message_callback=on_response,
-                                     auto_ack=True)
-    amqp_setup.channel.start_consuming()
     # Listen for the response message on the reply-to queue
-    print('\n\n--------End Refund--------')
-
-
-def on_response(channel, method, properties, body):
-    amqp_setup.check_setup()
-    print("Response from Refund MS received")
-    global refundDetails
-    refundDetails = json.loads(body)
-    if refundDetails['status'] == 'succeeded':
-        amqp_setup.check_setup()
-        refID = refundDetails['refund_id']
-        msg = json.dumps({
-            "notif_details": [phoneNo, amount, refID]
-        })
-        print('\n\n----------Send Notification----------')
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key='refund.notify',
-                                         body=msg, properties=pika.BasicProperties(delivery_mode=2))
-        print('\n\n----------Notification Sent----------')
-
+    print('\n\n--------End of startRefund--------')
 
 def updateActivityandError(code, message, order_result, rKey):
     print('ddd', rKey, code, message, order_result)
