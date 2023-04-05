@@ -43,7 +43,6 @@ def callback(channel, method, properties, body):
         val = arr[key[0]]
         phoneNo = val[0]
         refAmt = val[1]
-        refID = val[2]
         refundCompleted(phoneNo, refAmt)
     print() # print a new line feed
 

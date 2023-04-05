@@ -219,6 +219,8 @@ services:
     ports:
       - "5001:5001"
 
+############################################ Message based's Microservices (Complex MS) #################################################
+
   #################################################
   # Refund: The Refund an Order microservice
   #################################################
@@ -234,6 +236,7 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+      order_URL: http://order:5001/order
       stripePublicKey: "pk_test_51Mmaq9Kcs6la72jh1ZMbbP5wP4yd0wbYZ43d1aDu09CDagPhLEet12Mcho1Nm2gApRmaPt8CCHrrFpWNsKb3h6De00PYaYjnbP"
       stripeSecretKey: "sk_test_51Mmaq9Kcs6la72jh0v2KAFQGvOWzqEVksC3hLHdDwf7UfuTRLxS62UVBJFxdZfnvGHcWLVmSuHLypH5kyHWGaQuy00wKtjTYqW"
 
