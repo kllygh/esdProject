@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 from flask_cors import CORS
-from datetime import date
+from datetime import datetime
+
 
 import json
 import os
@@ -24,7 +25,7 @@ class Logs(db.Model):
     __tablename__ = 'activity_log'
 
     activityID = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     activity_details = db.Column(db.String(64), nullable=False)
 
     def __intit__(self, activityID, created, activity_details):
@@ -37,6 +38,7 @@ class Logs(db.Model):
                 "created": self.created,
                 "activity_details": self.activity_details
                 }
+
 
 ############ 2. Receiving the data from the queue #####################################################
 monitorBindingKey = '#.info'

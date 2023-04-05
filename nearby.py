@@ -63,7 +63,12 @@ def near_by():
                     "message": message
                 }
             routing_key = 'retrieveDetails.info'
-            updateActivityandError(code, message, result, routing_key)
+            activity = json.dumps({
+                "code": 200,
+                "data": {"nearby_result": message},
+                "message": 'Retrieve Box successful.'
+            })
+            updateActivityandError(code, activity, result, routing_key)
             ####################### End of AMQP ##########################################
 
             return jsonify(result), result["code"]

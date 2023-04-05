@@ -71,10 +71,14 @@
                 <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food"
                   aria-label="Search" />
               </div>
-              <div class="input-group-icon pe-2">
-                <button class="btn btn-white shadow-warning text-warning" type="submit"><i
+              <div class="dropdown">
+                <button class="btn btn-white shadow-warning text-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i
                     class="fas fa-user me-2"></i>Profile</button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href=".\refund.html">Past Orders</a></li>
+                    </ul>
               </div>
+              
               <div class="input-group-icon pe-2">
                 <button class="btn btn-white shadow-warning text-warning" type="submit">
                   <a id="logout" style="cursor: pointer;"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
@@ -128,7 +132,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
 
-                      <form class="row gx-4 gy-2 align-items-center">
+                      <div class="row gx-4 gy-2 align-items-center">
                         <div class="col">
                           <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
                             <label class="visually-hidden" for="inputPickup">FoodBox</label>
@@ -137,13 +141,13 @@
                           </div>
                         </div>
                         <div class="d-grid gap-3 col-sm-auto">
-                          <button @click="near_by2" class="btn btn-danger">Find Me</button>
+                          <button @click="findBox" class="btn btn-danger">Find Me</button>
                         </div>
 
-                      </form>
+                      </div>
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                      <form class="row gx-4 gy-2 align-items-center">
+                      <div class="row gx-4 gy-2 align-items-center">
                         <div class="col">
                           <div class="input-group-icon"><i class="fas fa-map-marker-alt text-danger input-box-icon"></i>
                             <label class="visually-hidden" for="inputRestaurant">Restaurant</label>
@@ -152,9 +156,9 @@
                           </div>
                         </div>
                         <div class="d-grid gap-3 col-sm-auto">
-                          <button @click="near_by2" class="btn btn-danger">Find Me</button>
+                          <button @click="findRestaurant" class="btn btn-danger">Find Me</button>
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -446,14 +450,14 @@
   <!-- ===============================================-->
   <script>
     // Straight to MS
-    // const nearby_URL = "http://localhost:5400/near_by";
-    // const box_URL = "http://localhost:5000/box";
-    // const rest_URL = "http://localhost:5300/restaurant";
+    const nearby_URL = "http://localhost:5400/near_by";
+    const box_URL = "http://localhost:5000/box";
+    const rest_URL = "http://localhost:5300/restaurant";
 
     // Through Konga
-    const nearby_URL = "http://localhost:8000/api/v1/near_by";
-    const box_URL = "http://localhost:8000/api/v1/box";
-    const rest_URL = "http://localhost:8000/api/v1/restaurant";
+    // const nearby_URL = "http://localhost:8000/api/v1/near_by";
+    // const box_URL = "http://localhost:8000/api/v1/box";
+    // const rest_URL = "http://localhost:8000/api/v1/restaurant";
 
     function checkLogin() {
       if (localStorage.getItem('uid') == null) {
@@ -562,13 +566,6 @@
       },
 
       methods: {
-
-        near_by3() {
-          console.log("yo")
-        },
-
-
-
         near_by2() {
           console.log("ha")
           const response =
@@ -738,6 +735,7 @@
 
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
   <!-- ===============================================-->
   <!--    JavaScripts-->
