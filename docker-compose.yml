@@ -162,6 +162,10 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+      account_sid: 'ACbfbac2a50236d5cb185770835367f26a'
+      auth_token: 'f7a22749373aeffa15d01a09436fe2ba'
+      msg_service_sid: 'MGb72ae56ef4f33be32fc35e4be263a85a'
+
 
   ####################################
   # Box: The Mystery Box microservice
