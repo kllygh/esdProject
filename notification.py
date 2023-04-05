@@ -1,5 +1,6 @@
 from twilio.rest import Client
 import json
+import os
 from os import environ
 import amqp_setup
 
