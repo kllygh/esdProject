@@ -74,9 +74,12 @@
             <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food"
               aria-label="Search" />
           </div>
-          <div class="input-group-icon pe-2">
-            <button class="btn btn-white shadow-warning text-warning" type="submit"><i
+          <div class="dropdown">
+            <button class="btn btn-white shadow-warning text-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i
                 class="fas fa-user me-2"></i>Profile</button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href=".\refund.html">Past Orders</a></li>
+                </ul>
           </div>
           <div class="input-group-icon pe-2">
             <button class="btn btn-white shadow-warning text-warning" type="submit">
@@ -270,10 +273,10 @@
           inventory: 0,
           customerNumber: 90907461,
           restaurantID: 0,
-          box_url: "http://localhost:5000/box",
-          restaurant_url: "http://localhost:5300/restaurant",
+          box_url: "http://localhost:8000/api/v1/box",
+          restaurant_url: "http://localhost:8000/api/v1/restaurant",
           paymentMessage: "",
-          place_order_URL: "http://localhost:5111/place_order"
+          place_order_URL: "http://localhost:8000/api/v1/place_order"
         }
       },
 
@@ -404,7 +407,7 @@
 
             },
           });
-          console.log(error);
+          console.log(error);3
 
           // This point will only be reached if there is an immediate error when
           // confirming the payment. Otherwise, your customer will be redirected to

@@ -27,11 +27,11 @@ def requestRefund():
 
     # set up a consumer and start to wait for coming messages
     amqp_setup.channel.basic_consume(
-        queue=queue_name, on_message_callback=on_request, auto_ack=True)
+        queue=queue_name, on_message_callback=callback, auto_ack=True)
     amqp_setup.channel.start_consuming()
 
 
-def on_request(channel, method, properties, body):
+def callback(channel, method, properties, body):
     print("\nReceived a request to notify customer by " + __file__)
     print('\n--------------TEST 1 PASSED----------------')
     arr = json.loads(body)
@@ -40,22 +40,6 @@ def on_request(channel, method, properties, body):
     val = arr['refund_details']
     ref_json = initiate_refund(val[0], val[1])
     ref = json.dumps(ref_json)
-    print('\n--------------TEST 2 PASSED----------------')
-
-    amqp_setup.check_setup()
-    if channel.is_open:
-        print('\n--------------CHANNEL OPEN, INITIATING RETURN MESSAGE----------------')
-        amqp_setup.channel.basic_publish(
-            # assume we using the same exchange as the others
-            exchange=amqp_setup.exchangename,
-            routing_key=properties.reply_to,  # need to be declared in cancel an order MS
-            properties=pika.BasicProperties(
-                correlation_id=properties.correlation_id),
-            body=ref
-        )
-        print("Message sent.")  # print a new line feed
-    else:
-        print("Channel not open, unable to send message.")
 
 
 def initiate_refund(chargeID, amt):
