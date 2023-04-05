@@ -3,10 +3,10 @@ const stripe = Stripe(
   "pk_test_51Mmaq9Kcs6la72jh1ZMbbP5wP4yd0wbYZ43d1aDu09CDagPhLEet12Mcho1Nm2gApRmaPt8CCHrrFpWNsKb3h6De00PYaYjnbP"
 );
 
-const place_order_URL = "http://127.0.0.1:5100/place_order";
-const payment_URL = "http://127.0.0.1:6002/payment";
-const box_url = "http://127.0.0.1:5000/box";
-const restaurant_url = "http://127.0.0.1:5300/restaurant";
+const place_order_URL = "http://localhost:5100/place_order";
+const payment_URL = "http://localhost:6002/payment";
+const box_url = "http://localhost:5000/box";
+const restaurant_url = "http://localhost:5300/restaurant";
 
 // HERE CREATE PAYMENT ELEMENT
 const options = {

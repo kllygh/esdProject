@@ -143,6 +143,8 @@ services:
     restart: always
     environment:
       PYTHONUNBUFFERED: 1
+      STRIPE_PUBLISHABLE_KEY: "pk_test_51Mmaq9Kcs6la72jh1ZMbbP5wP4yd0wbYZ43d1aDu09CDagPhLEet12Mcho1Nm2gApRmaPt8CCHrrFpWNsKb3h6De00PYaYjnbP"
+      STRIPE_SECRET_KEY: "sk_test_51Mmaq9Kcs6la72jh0v2KAFQGvOWzqEVksC3hLHdDwf7UfuTRLxS62UVBJFxdZfnvGHcWLVmSuHLypH5kyHWGaQuy00wKtjTYqW"
 
 
   ###############################################
@@ -251,6 +253,7 @@ services:
       - box
       - restaurant
       - activity_log
+      - error
       - rabbitmq
     environment:
       rabbit_host: rabbitmq
@@ -277,14 +280,14 @@ services:
       - activity_log
       - notification
       - error
-      - payment
+      - refund
       - rabbitmq
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       order_URL: http://order:5001/order
       box_URL: "http://box:5000/box"
-      payment_URL: "http://payment:6002/create-checkout-session"
+      payment_URL: "http://payment:6002/payment"
       PYTHONUNBUFFERED: 1
     ports:
       - "5500:5500"
@@ -311,7 +314,7 @@ services:
       rabbit_port: 5672
       order_URL: http://order:5001/order
       box_URL: "http://box:5000/box"
-      payment_URL: "http://payment:6002/create-checkout-session"
+      payment_URL: "http://payment:6002/payment"
       PYTHONUNBUFFERED: 1
     ports:
       - "5111:5111"

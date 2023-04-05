@@ -18,9 +18,10 @@ app = Flask(__name__)
 CORS(app)
 
 
-order_URL = environ.get('order_URL')
-box_URL = environ.get('box_URL')
-payment_URL = environ.get("payment_URL")
+order_URL = environ.get('order_URL') or "http://localhost:5001/order"
+box_URL = environ.get('box_URL') or "http://localhost:5000/box"
+payment_URL = environ.get(
+    "payment_URL") or "http://localhost:6002/payment"
 
 
 @app.route("/place_order", methods=['POST'])
@@ -63,9 +64,9 @@ def processPlaceOrder(order):
     print('\n------START HERE-----')
 
     # Get order info
-    boxID = int(order["boxID"])
-    quantity = int(order["quantity"])
-    customer_number = int(order["customer_number"])
+    boxID = order["boxID"]
+    quantity = order["quantity"]
+    customer_number = order["customer_number"]
     customer_id = order["customer_id"]
     restaurant_name = order["restaurant_name"]
     total_bill = order["total_bill"]  # not sure
@@ -91,13 +92,14 @@ def processPlaceOrder(order):
     # Set unit amount, which is in cents
     cents = int(total_bill * 100)
 
-    print(boxID, quantity, customer_number, customer_id, restaurant_name,
+    print(boxID, quantity, customer_number, customer_id, restaurant_name, restaurant_id, collection_time, location,
           total_bill, currency)
 
     # 1. Check if sufficient inventory
 
     print('\n------Invoking box microservice-----')
     inv_URL = f"{box_URL}/{boxID}"
+    print(boxID)
     inventory_result = invoke_http(inv_URL, method="GET")
     print("inventory_result:", inventory_result, '\n')
 

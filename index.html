@@ -727,7 +727,9 @@
         // send boxID to place order
 
         place_order(boxID) {
-          window.location.href = './place_order/place_order.html?boxID=' + boxID;
+          console.log(boxID);
+          localStorage.setItem('boxID', boxID);
+          window.location.href = './place_order/place_order.html';
         },
       }
     });

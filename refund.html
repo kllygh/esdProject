@@ -88,25 +88,36 @@
           <div class="text-muted text-center mt-2 mb-3"><small>Making a refund for your order</small></div>
           <table id="app">
             <tr>
-              <th>Post Name</th>
+              <th>Box Name</th>
               <th>Quantity</th>
               <th>Date ordered</th>
               <th>Time collected</th>
               <th>Total bill</th>
               <th>Status</th>
+              <th>Refund?</th>
             </tr>
-            <template>
-              <tr v-for="order in past_orders">
-                <!-- Call Box ms to return postname base on boxid -->
-                <td>{{ get_boxName(order) }}</td>
-                <td>{{ order.quantity }}</td>
-                <td>{{ order.created }}</td>
-                <td>{{ order.bill }}</td>
-                <td>{{ order.status }}</td>
-                <td><button @click="cancel_order" :disabled="isDisabled" class="btn">Refund</button></td>
-                <!--Need to do a v-if here for disabling button-->
-              </tr>
-            </template>
+            <tr v-for="(order, index) in past_orders" :key="index">
+              <td>{{ boxNames[index] }}</td>
+              <td>{{ order.quantity }}</td>
+              <td>{{ order.created }}</td>
+              <td>{{ collectionTimes[index] }}</td>
+              <td>{{ order.total_bill }}</td>
+              <td>{{ order.status }}</td>
+              <td><button @click="cancel_order(order.order_id)" :disabled="isDisabled" class="btn">Refund</button></td>
+            </tr>
+
+            <!-- <tr v-for="order in past_orders">
+              Call Box ms to return postname base on boxid
+              <td>{{ get_boxName(order.id) }}</td>
+              <td>{{ order.quantity }}</td>
+              <td>{{ order.created }}</td>
+              <td> time collected</td>
+              <td>{{ order.bill }}</td>
+              <td>{{ order.status }}</td>
+              <td><button @click="cancel_order" :disabled="isDisabled" class="btn">Refund</button></td>
+              Need to do a v-if here for disabling button
+            </tr> -->
+
           </table>
 
         </div>
@@ -188,20 +199,30 @@
             data() {
               return {
                 past_orders: [],
-                order_url: "http://127.0.0.1:5001/order/customer",
+                order_url: "http://127.0.0.1:5001/order",
                 customer_id: "abc100",
                 quantity: 0,
                 order_time: "2023-04-01",
                 bill: 0,
-                order_id: 0
+                // order_id: 0,
+                boxNames: [],
+                collectionTimes: [],
+                box_url: "http://localhost:8000/api/v1/box",
+                cancel_order_url: "http://localhost:5500/cancel_order"
+
               }
             },
             methods: {
-              cancel_order() {
-                const cancel_order_url = "http://localhost:5500/cancel_order";
-                const orderID = 1;
-                fetch(`${cancel_order_url}/${orderID}`, {
-                    method: 'POST'
+              cancel_order(orderID) {
+                // const orderID = 1;
+                fetch(this.cancel_order_url, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      orderID: orderID
+                    })
                   })
                   .then(response => response.json())
                   .then(data => {
@@ -210,8 +231,8 @@
               },
               get_boxName(order) {
                 let boxID = order.boxID
-                const box_url = "http://localhost:8000/api/v1/box";
-                fetch(`${box_url}/${boxID}`, {
+
+                fetch(`${this.box_url}/${boxID}`, {
                     method: 'GET'
                   })
                   .then(response => response.json())
@@ -223,34 +244,55 @@
                     return boxName
                   })
               },
+
               getPastOrders() {
                 const response =
-                  fetch(`${this.order_url}/${this.customer_id}`)
+                  fetch(`${this.order_url}/customer/${this.customer_id}`)
                   .then(response => response.json())
                   .then(data => {
-                    console.log(response);
                     if (data.code === 404) {
                       console.log(data.message);
                     } else {
                       this.past_orders = data.data.orders;
+                      console.log(data.data.orders);
+                      this.generateData(data.data.orders);
                     }
                   })
                   .catch(error => {
                     console.log(this.message + error);
                   });
+              },
+              generateData(past_orders) {
+                console.log(past_orders);
+                for (let order of past_orders) {
+
+                  fetch(`${this.box_url}/${order["boxID"]}`)
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.code === 404) {
+                        console.log(data.message);
+                      } else {
+                        this.boxNames.push(data.data.boxName);
+                        this.collectionTimes.push(data.data.collectionTime);
+                      }
+                    })
+                    .catch(error => {
+                      console.log(this.message + error);
+                    });
+                }
               }
             },
             created() {
               this.getPastOrders()
+
             },
             computed: {
               isDisabled() {
                 // Need to check
               },
-              computedValues() {
-                return this.past_orders.map((order) => this.get_boxName(order))
-              }
-            }
+
+            },
+
 
           }).mount('#app')
 

@@ -124,6 +124,9 @@
               <a style="font-weight:bold; font-size:23px;" id="inventory">Current quantity available:
               </a><a style="font-size:20px;">
                 {{ inventory }}</a><br>
+              <a style="font-weight:bold; font-size:23px;" id="price">Price:
+              </a><a style="font-size:20px;">
+                {{ price }}</a><br>
               <br>
               <h1 class="text-center">Enter your details:</h1>
 
@@ -242,7 +245,9 @@
         });
     </script>
   <!-- ------------------------------------------------end of firebase----------------------------------------------------------- -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+
   <script>
     const {
       createApp
@@ -257,17 +262,18 @@
           boxName: "",
           location: "",
           collectionTime: "2023-03-26 21:43:02",
-          boxID: boxID, // NOTE need to generate from ui
+          boxID: null, // NOTE need to generate from ui
           customerID: 'abc100',
           // need help with getting this customer ID from local= storage somehow its null
           quantity: 1,
+          price: 0,
           inventory: 0,
           customerNumber: 90907461,
-          restaurantID: 82763492,
-          box_url: "http://127.0.0.1:5000/box",
-          restaurant_url: "http://127.0.0.1:5300/restaurant",
+          restaurantID: 0,
+          box_url: "http://localhost:5000/box",
+          restaurant_url: "http://localhost:5300/restaurant",
           paymentMessage: "",
-          place_order_URL: "http://127.0.0.1:5111/place_order"
+          place_order_URL: "http://localhost:5111/place_order"
         }
       },
 
@@ -291,10 +297,12 @@
                 // no book in db
                 console.log(data.message);
               } else {
+                console.log(this.boxID);
                 this.restaurantID = data.data.restaurant_id;
                 this.collectionTime = data.data.collectionTime;
                 this.inventory = data.data.quantity;
                 this.boxName = data.data.boxName;
+                this.price = data.data.price;
                 this.getRestaurantInfo()
 
               }
@@ -354,7 +362,8 @@
                 "restaurant_name": this.restaurant,
                 // sent restaurant name for msg notification, not to be stored in Order
                 "restaurant_id": this.restaurantID,
-                "total_bill": 18.50,
+                "total_bill": this.price,
+                // NOTE: generate from UI
                 "currency": "sgd",
                 "collection_time": this.collectionTime,
                 "location": this.location
@@ -420,13 +429,18 @@
 
       },
       created() {
+
+        const boxID = localStorage.getItem('boxID');
+        this.boxID = boxID;
         this.getBoxInfo();
       },
-      mounted() {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        this.boxID = urlParams.get('boxID');
-      }
+      // mounted() {
+      //   const queryString = window.location.search;
+      //   const urlParams = new URLSearchParams(queryString);
+      //   this.boxID = urlParams.get('boxID');
+      //   console.log(urlParams)
+      //   console.log(boxID);
+      // }
     }).mount('#app')
   </script>
 
