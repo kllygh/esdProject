@@ -96,14 +96,14 @@
               <th>Status</th>
               <th>Refund?</th>
             </tr>
-            <tr v-for="(order, index) in past_orders" :key="index">
-              <td>{{ boxNames[index] }}</td>
-              <td>{{ order.quantity }}</td>
-              <td>{{ order.created }}</td>
-              <td>{{ collectionTimes[index] }}</td>
-              <td>{{ order.total_bill }}</td>
-              <td>{{ order.status }}</td>
-              <td><button @click="cancel_order(order.order_id)" :disabled="isDisabled" class="btn">Refund</button></td>
+            <tr v-for="(row, index) in tableDetails" :key="index">
+              <td>{{ row.boxName }}</td>
+              <td>{{ row.quantity }}</td>
+              <td>{{ row.date }}</td>
+              <td>{{ row.collection }}</td>
+              <td>{{ row.total }}</td>
+              <td>{{ row.status }}</td>
+              <td><button @click="cancel_order(row.id)" :disabled="isDisabled" class="btn">Refund</button></td>
             </tr>
 
             <!-- <tr v-for="order in past_orders">
@@ -204,44 +204,30 @@
                 quantity: 0,
                 order_time: "2023-04-01",
                 bill: 0,
-                // order_id: 0,
-                boxNames: [],
-                collectionTimes: [],
+
                 box_url: "http://localhost:8000/api/v1/box",
-                cancel_order_url: "http://localhost:5500/cancel_order"
+                cancel_order_url: "http://localhost:5500/cancel_order",
+                tableDetails: []
 
               }
             },
             methods: {
               cancel_order(orderID) {
                 // const orderID = 1;
+                console.log(orderID);
                 fetch(this.cancel_order_url, {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
-                      'Content-Type': 'application/json'
+                      "Content-type": "application/json"
                     },
                     body: JSON.stringify({
-                      orderID: orderID
+                      "orderID": orderID
                     })
                   })
                   .then(response => response.json())
                   .then(data => {
                     console.log(data.message)
-                  })
-              },
-              get_boxName(order) {
-                let boxID = order.boxID
-
-                fetch(`${this.box_url}/${boxID}`, {
-                    method: 'GET'
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                    console.log(data.message)
-                    console.log(data.data)
-                    let boxName = data.data.boxName
-                    console.log(boxName)
-                    return boxName
+                    // location.reload(true);
                   })
               },
 
@@ -265,6 +251,12 @@
               generateData(past_orders) {
                 console.log(past_orders);
                 for (let order of past_orders) {
+                  console.log(order);
+                  let id = order.order_id;
+                  let quantity = order.quantity;
+                  let date = order.created;
+                  let total = order.total_bill;
+                  let status = order.status
 
                   fetch(`${this.box_url}/${order["boxID"]}`)
                     .then(response => response.json())
@@ -272,8 +264,21 @@
                       if (data.code === 404) {
                         console.log(data.message);
                       } else {
-                        this.boxNames.push(data.data.boxName);
-                        this.collectionTimes.push(data.data.collectionTime);
+                        let result = data.data;
+                        let boxName = result.boxName;
+                        let collectionTime = result.collectionTime;
+                        let row = {
+                          "id": id,
+                          "quantity": quantity,
+                          "date": date,
+                          "total": total,
+                          "status": status,
+                          "collection": collectionTime,
+                          "boxName": boxName
+                        }
+                        this.tableDetails.push(row);
+                        // this.boxNames.push(data.data.boxName);
+                        // this.collectionTimes.push(data.data.collectionTime);
                       }
                     })
                     .catch(error => {

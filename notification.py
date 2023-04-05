@@ -1,27 +1,30 @@
-from twilio.rest import Client 
+from twilio.rest import Client
 import json
 import os
 import amqp_setup
 
-account_sid = 'ACbfbac2a50236d5cb185770835367f26a' 
-auth_token = 'f7a22749373aeffa15d01a09436fe2ba' 
+account_sid = 'ACbfbac2a50236d5cb185770835367f26a'
+auth_token = 'f7a22749373aeffa15d01a09436fe2ba'
 msg_service_sid = 'MGb72ae56ef4f33be32fc35e4be263a85a'
-client = Client(account_sid, auth_token) 
+client = Client(account_sid, auth_token)
 
-monitorBindingKey='#.notif'
+monitorBindingKey = '#.notif'
+
 
 def sendNotif():
     amqp_setup.check_setup()
-        
-    queue_name = 'Notification' #can change later
-    
+
+    queue_name = 'Notification'  # can change later
+
     # set up a consumer and start to wait for coming messages
-    amqp_setup.channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
+    amqp_setup.channel.basic_consume(
+        queue=queue_name, on_message_callback=callback, auto_ack=True)
     amqp_setup.channel.start_consuming()
+
 
 def callback(channel, method, properties, body):
     print("\nReceived a request to notify customer by " + __file__)
-    arr = json.loads(body) 
+    arr = json.loads(body)
     key = list(arr.keys())
     if key[0] == 'OrderSuccess':
         val = arr[key[0]]
@@ -43,11 +46,13 @@ def callback(channel, method, properties, body):
         refAmt = val[1]
         refID = val[2]
         refundCompleted(phoneNo, refAmt, refID)
-    print() # print a new line feed
+    print()  # print a new line feed
 
-#order confirmation function
+# order confirmation function
+
+
 def OrderConfirmation(phoneNo, custID, orderID, collectionTime, location):
-    # phoneNum = '+6590907461' 
+    # phoneNum = '+6590907461'
     # custID = 'test_custID'
     # orderID = 'test_OrderID'
     # collectionTime = '8pm-9pm'
@@ -57,54 +62,65 @@ def OrderConfirmation(phoneNo, custID, orderID, collectionTime, location):
     orderID = orderID
     collectionTime = collectionTime
     location = location
-    msgbody = 'Thank you for your order. Please show this message to the restaurant when collecting your Mystery Box. \n\n Order ID: ' + orderID + '\n Customer ID: ' + custID + '\n Collection Time: Today at ' + collectionTime + '\n Location: ' + location
-    
-    message = client.messages.create(  
-                                messaging_service_sid = msg_service_sid, 
-                                body = msgbody,      
-                                to = phoneNum 
-                            ) 
-    
+    msgbody = 'Thank you for your order. Please show this message to the restaurant when collecting your Mystery Box. \n\n Order ID: ' + \
+        orderID + '\n Customer ID: ' + custID + '\n Collection Time: Today at ' + \
+        collectionTime + '\n Location: ' + location
+
+    message = client.messages.create(
+        messaging_service_sid=msg_service_sid,
+        body=msgbody,
+        to=phoneNum
+    )
+
     print(message.sid)
 
-#transaction completed function
+# transaction completed function
+
+
 def transactionCompleted(phoneNo, transAmt, transID):
-    # phoneNum = '+6590907461' 
+    # phoneNum = '+6590907461'
     # transactionAmount = str(10.00)
     # transactionID = 'test_transactionID'
 
-    phoneNum = phoneNo 
+    phoneNum = phoneNo
     transactionAmount = transAmt
     transactionID = transID
-    msgbody = 'Successful payment of $' + transactionAmount + ' made to Mystery Box. Transaction ID is ' + transactionID + '.'
-    
-    message = client.messages.create(  
-                                    messaging_service_sid = msg_service_sid, 
-                                    body = msgbody,      
-                                    to = phoneNum 
-                            ) 
-    
+    msgbody = 'Successful payment of $' + transactionAmount + \
+        ' made to Mystery Box. Transaction ID is ' + transactionID + '.'
+
+    message = client.messages.create(
+        messaging_service_sid=msg_service_sid,
+        body=msgbody,
+        to=phoneNum
+    )
+
     print(message.sid)
 
-#transaction refunded function
+# transaction refunded function
+
+
 def refundCompleted(phoneNo, refAmt, refID):
-    # phoneNum = '+6590907461' 
+    # phoneNum = '+6590907461'
     # refundAmount = str(10.00)
     # refundID = 'test_transactionID'
-    phoneNum = phoneNo 
+    phoneNum = phoneNo
     refundAmount = refAmt
     refundID = refID
-    msgbody = 'Successful refund of $' + refundAmount + ' made. Refund ID is ' + refundID + '.'
-    
-    message = client.messages.create(  
-                                    messaging_service_sid = msg_service_sid, 
-                                    body = msgbody,      
-                                    to = phoneNum 
-                            ) 
-    
+    msgbody = 'Successful refund of $' + refundAmount + \
+        ' made. Refund ID is ' + refundID + '.'
+
+    message = client.messages.create(
+        messaging_service_sid=msg_service_sid,
+        body=msgbody,
+        to=phoneNum
+    )
+
     print(message.sid)
 
-if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
+
+# execute this program only if it is run as a script (not by 'import')
+if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
-    print(": monitoring routing key '{}' in exchange '{}' ...".format(monitorBindingKey, amqp_setup.exchangename))
+    print(": monitoring routing key '{}' in exchange '{}' ...".format(
+        monitorBindingKey, amqp_setup.exchangename))
     sendNotif()

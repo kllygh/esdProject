@@ -1,102 +1,110 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+
 import os
 import sys
 # from os import environ
 
+
 import requests
 from invokes import invoke_http
+
 
 import pika
 import json
 import amqp_setup
 from os import environ
 
+
 app = Flask(__name__)
 CORS(app)
 
-orderURL = environ.get('order_URL')
-boxURL = environ.get('box_URL')
+
+orderURL = environ.get('order_URL') or "http://localhost:5001/order"
+boxURL = environ.get('box_URL') or "http://localhost:5000/box"
+
 
 ############# code added here #########################################################
 
 
 @app.route('/cancel_order', methods=['POST'])
 def CancelOrder():
+
+    orderID = request.get_json()["orderID"]
+    # global orderID
+    # orderID = int(OrderID)
+
     try:
-        # print(OrderID)
-        # global orderID
-        # orderID = int(OrderID)
-        orderID = request.get_json()
-        try:
-            # get order details
-            print('\n-----1. Getting order details from Order MS-----')
-            order = invoke_http(orderURL + '/' + str(orderID))  # type = dict
-            print(order)
-            code = order["code"]
-            message = json.dumps(order)
-            if code not in range(200, 300):
-                routing_key = 'retrieveDetails.error'
-                updateActivityandError(code, message, order, routing_key)
-                return {
-                    "code": 500,
-                    "data": {"cancel_order_result": order['data'], "status": "Failed"},
-                    "message": "Unable to find Order."
-                }, 500
-            routing_key = 'retrieveDetails.info'
-            activity = json.dumps({
-                "code": 200,
-                "data": {"cancel_order_result": order['data'], "status": "Success"},
-                "message": "Retrieved Box successfully."
-            })
-            updateActivityandError(code, activity, order, routing_key)
-
-            print('\n\n--------2. Sending to ProcessCancelOrder--------')
-            result = ProcessCancelOrder(order['data'])
-            print('\nresult: ', result)
-            print('\n\n--------7. End ProcessCancelOrder--------')
-
-            try:
-                print('\n\n--------8. Send to update_order_status--------')
-                status = refundDetails['status']
-                result = update_order_status(status)
-                print('\n\n----------9. End update_order_status----------')
-                return jsonify(result), result["code"]
-            except:
-                result = {
-                    "code": 500,
-                    "data": {
-                        "status": "Failed"
-                    },
-                    "message": "Order refundID unable to be updated."
-                }
-                return jsonify(result), result["code"]
-
-        except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ex_str = str(e) + " at " + str(exc_type) + ": " + \
-                fname + ": line " + str(exc_tb.tb_lineno)
-            print(ex_str)
-
-            return jsonify({
+        # get order details
+        print(orderID)
+        print('\n-----1. Getting order details from Order MS-----')
+        order = invoke_http(orderURL + '/' + str(orderID))  # type = dict
+        print(order)
+        code = order["code"]
+        message = json.dumps(order)
+        if code not in range(200, 300):
+            routing_key = 'retrieveDetails.error'
+            updateActivityandError(code, message, order, routing_key)
+            return {
                 "code": 500,
-                "message": "cancel_order.py internal error: " + ex_str
-            }), 500
+                "data": {"cancel_order_result": order['data'], "status": "Failed"},
+                "message": "Unable to find Order."
+            }, 500
+        routing_key = 'retrieveDetails.info'
+        activity = json.dumps({
+            "code": 200,
+            "data": {"cancel_order_result": order['data'], "status": "Success"},
+            "message": "Retrieved Box successfully."
+        })
+        updateActivityandError(code, activity, order, routing_key)
 
-    # if reached here, not an int.
-    except:
-        print('\n\n--------Error not Int--------')
+        print('\n\n--------2. Sending to ProcessCancelOrder--------')
+        result = ProcessCancelOrder(order['data'])
+        print('\nresult: ', result)
+        print('\n\n--------7. End ProcessCancelOrder--------')
+
+        try:
+            print('\n\n--------8. Send to update_order_status--------')
+            status = refundDetails['status']
+            result = update_order_status(status)
+            print('\n\n----------9. End update_order_status----------')
+            return jsonify(result), result["code"]
+        except:
+            result = {
+                "code": 500,
+                "data": {
+                    "status": "Failed"
+                },
+                "message": "Order refundID unable to be updated."
+            }
+            return jsonify(result), result["code"]
+
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        ex_str = str(e) + " at " + str(exc_type) + ": " + \
+            fname + ": line " + str(exc_tb.tb_lineno)
+        print(ex_str)
+
         return jsonify({
-            "code": 400,
-            "message": "Not an integer"
-        }), 400
+            "code": 500,
+            "message": "cancel_order.py internal error: " + ex_str
+        }), 500
+
+    # # if reached here, not an int.
+    # except:
+    #     print('\n\n--------Error not Int--------')
+    #     return jsonify({
+    #         "code": 400,
+    #         "message": "Not an integer"
+    #     }), 400
 
 
 def ProcessCancelOrder(orderDetails):
-    print("hi")
     # update inventory
+    amqp_setup.check_setup()
+
     print('\n\n--------3. Start Update Box Inventory--------')
     quantity = orderDetails["quantity"]
     boxID = str(orderDetails["boxID"])
@@ -130,7 +138,7 @@ def ProcessCancelOrder(orderDetails):
     print('\n\n--------6. Exit refund.py--------')
     if refundDetails['status'] == 'succeeded':
         return {
-            "code": 200,
+            "code": 201,
             "data": {
                 "status": "Success"
             },
@@ -167,6 +175,7 @@ def update_order_status(refund_status):
             }
         routing_key = 'updateOrder.info'
         updateActivityandError(code, message, order, routing_key)
+        amqp_setup.channel.close()
         return {
             "code": 200,
             "data": {
@@ -181,6 +190,7 @@ def update_order_status(refund_status):
             "data": {"cancel_order_result": None},
             "message": "Error processing refund."
         }
+
 
 # step6-7
 
@@ -212,6 +222,7 @@ def startRefund(chargeID, Amt):
 
 
 def on_response(channel, method, properties, body):
+    amqp_setup.check_setup()
     print("Response from Refund MS received")
     global refundDetails
     refundDetails = json.loads(body)
@@ -225,12 +236,12 @@ def on_response(channel, method, properties, body):
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key='refund.notify',
                                          body=msg, properties=pika.BasicProperties(delivery_mode=2))
         print('\n\n----------Notification Sent----------')
-    amqp_setup.channel.close()
 
 
 def updateActivityandError(code, message, order_result, rKey):
+    print('ddd', rKey, code, message, order_result)
     amqp_setup.check_setup()
-
+    print('====')
     if code not in range(200, 300):
         print('\n\n-----Publishing the error message with routing_key=' + rKey + '-----')
 
@@ -241,6 +252,7 @@ def updateActivityandError(code, message, order_result, rKey):
 
     else:
         print('\n\n-----Publishing the info message with routing_key=' + rKey + '-----')
+        amqp_setup.check_setup()
 
         # invoke_http(activity_log_URL, method="POST", json=order_result)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key=rKey,

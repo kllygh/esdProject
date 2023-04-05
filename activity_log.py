@@ -11,7 +11,8 @@ from os import environ
 import amqp_setup
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dburl') or 'mysql+mysqlconnector://root:root@localhost:3306/activity_log'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get(
+    'dburl') or 'mysql+mysqlconnector://root:root@localhost:3306/activity_log'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 ############ 1. Creation of the database #####################################################
 db = SQLAlchemy(app)
 CORS(app)
+
 
 class Logs(db.Model):
     __tablename__ = 'activity_log'
@@ -38,8 +40,10 @@ class Logs(db.Model):
                 "activity_details": self.activity_details
                 }
 
+
 ############ 2. Receiving the data from the queue #####################################################
 monitorBindingKey = '#.info'
+
 
 def receiveLog():
     amqp_setup.check_setup()
@@ -58,10 +62,12 @@ def callback(channel, method, properties, body):
 
 ############ 3. Adding into Database, SQL #####################################################
 
+
 def processLog(logs):
     print("Recording an log:")
     print(logs)
-    newLogs = logs['message'] #everyone need to change their MS to return message also!
+    # everyone need to change their MS to return message also!
+    newLogs = logs['message']
     print(newLogs)
 
     # aLog = Logs(activity_details = newLogs)
@@ -73,7 +79,7 @@ def processLog(logs):
         db.session.add(aLog)
         db.session.commit()
 
-    #should be like this
+    # should be like this
     # {
     #     "code": 404,
     #     "data": {
@@ -81,6 +87,7 @@ def processLog(logs):
     #     },
     #     "message": "Order not found." ---> REQUIRED
     # }
+
 
 if __name__ == "__main__":
     print("\nThis is " + os.path.basename(__file__), end='')
